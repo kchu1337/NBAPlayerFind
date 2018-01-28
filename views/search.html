@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular.min.js"></script>
+    <title>Title</title>
+</head>
+<body data-ng-app>
+<div class ="container">
+    <div data-ng-controller="players">
+        <div id="accordion" role="tablist" aria-multiselectable="true">
+            <div class="card">
+                <div class="card-header" role="tab" id="headingOne">
+                    <h5 class="mb-0">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#search" aria-expanded="false" aria-controls="collapseOne">
+                            Find Player
+                        </a>
+                    </h5>
+                </div>
+                <div id="search" class="collapse show" role="tabpanel" aria-labelledby="headingOne">
+                    <div class="card-block container">
+                        <div class="form-group row">
+                            <label for="fga0" class="col-3 col-form-label">FG Attempt % <8ft</label>
+                            <div class="col-4">
+                                <input type="number" id = "fga0"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="fgp0" class="col-3 col-form-label">FG Shooting % <8ft</label>
+                            <div class="col-4">
+                                <input type="number" id = "fgp0"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="fga8" class="col-3 col-form-label">FG Attempt % 8-16ftft</label>
+                            <div class="col-4">
+                                <input type="number" id = "fga8"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="fgp8" class="col-3 col-form-label">FG Shooting % 8-16ft</label>
+                            <div class="col-4">
+                                <input type="number" id = "fgp8"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="fga16" class="col-3 col-form-label">FG Attempt % 16-24ft</label>
+                            <div class="col-4">
+                                <input type="number" id = "fga16"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="fgp16" class="col-3 col-form-label">FG Shooting % 16-24ft</label>
+                            <div class="col-4">
+                                <input type="number" id = "fgp16"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="fga24" class="col-3 col-form-label">FG Attempt % 24+ft</label>
+                            <div class="col-4">
+                                <input type="number" id = "fga24"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="fgp24" class="col-3 col-form-label">FG Shooting % 24+ft</label>
+                            <div class="col-4">
+                                <input type="number" id = "fgp24"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="ast" class="col-3 col-form-label">Assist Rate</label>
+                            <div class="col-4">
+                                <input type="number" id = "ast"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="tov" class="col-3 col-form-label">Turnover Rate</label>
+                            <div class="col-4">
+                                <input type="number" id = "tov"/>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="usg" class="col-3 col-form-label">Usage Rate</label>
+                            <div class="col-4">
+                                <input type="number" id = "usg"/>
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="form-group row">
+                            <button type="button" class="btn btn-primary col-3" ng-click = "submit()">search</button>
+                        </div>
+                        <br/>
+                    </div>
+                </div>
+                <div class = "col-8">
+                    <h3>Top 3 Results:</h3>
+                    <p data-ng-repeat="player in players">
+                        <a ng-href = "/details?name={{player.name}}">
+                            {{ player.name }}
+                            <br/>
+                            <img ng-src = "https://nba-players.herokuapp.com/players/{{player.lname}}/{{player.fname}}" alt = "image not found"
+                                 onError="this.onerror=null;this.src='http://sportingindia.com/sites/default/files/profile_picture/blank_headshot_3_64_20.png';"/>
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+
+    $('#headingOne').collapse('hide')
+    function players($scope, $http) {
+
+
+
+
+        $scope.submit = function () {
+            //Get all parameters from DOM
+            var fga0 = document.getElementById("fga0").value;
+            var fgp0 = document.getElementById("fgp0").value;
+            var fga8 = document.getElementById("fga8").value;
+            var fgp8 = document.getElementById("fgp8").value;
+            var fga16 = document.getElementById("fga16").value;
+            var fgp16 = document.getElementById("fgp16").value;
+            var fga24 = document.getElementById("fga24").value;
+            var fgp24 = document.getElementById("fgp24").value;
+            var ast = document.getElementById("ast").value;
+            var tov = document.getElementById("tov").value;
+            var usg = document.getElementById("usg").value;
+
+            //Create url
+            var query = "http://localhost:8080/sample?"
+            query+="fga0="+fga0;
+            query+="&fgp0="+fgp0;
+            query+="&fga8="+fga8;
+            query+="&fgp8="+fgp8;
+            query+="&fga16="+fga16;
+            query+="&fgp16="+fgp16;
+            query+="&fga24="+fga24;
+            query+="&fgp24="+fgp24;
+            query+="&ast="+ast;
+            query+="&tov="+tov;
+            query+="&usg="+usg;
+            console.log(query);
+
+            //Get JSON
+            $.ajax({url: query, crossDomain: true, dataType: 'json', type: 'GET'})
+                .done(function (json) {
+                    $scope.players = json;
+                    $scope.$apply();
+                })
+                .fail(function () {
+                    alert("Error");
+                });
+        }
+    }
+</script>
+</html>

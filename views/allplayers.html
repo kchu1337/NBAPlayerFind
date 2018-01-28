@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+
+    <title>All PLayers</title>
+    <style>
+        .st-sort-ascent:before{
+            content: '\25B2';
+        }
+
+        .st-sort-descent:before{
+            content: '\25BC';
+        }
+    </style>
+<body ng-app="myApp">
+<div class ="container">
+    <div ng-controller="allPlayersController">
+        <table st-table="playerCollection" st-safe-src="playerList" class = "table table-bordered table-striped">
+            <thead>
+
+            <th>
+                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="name">Name</button>
+            </th>
+            <th>
+                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="fga0">FG Attempts% <8ft</button>
+            </th>
+            <th>
+                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="fgp0">FG% <8ft</button>
+            </th>
+            <th>
+                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="fga8">FG Attempts% 8-16ft</button>
+            </th>
+            <th>
+                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="fgp8">FG% 8-16ft</button>
+            </th>
+            <th>
+                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="fga16">FG Attempts% 16-24ft</button>
+            </th>
+            <th>
+                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="fgp16">FG% 16-24ft</button>
+            </th>
+            <th>
+                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="fga24">FG Attempts% 24+ft</button>
+            </th>
+            <th>
+                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="fgp24">FG% 24+ft</button>
+            </th>
+            <th>
+                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="ast">Assist Rate</button>
+            </th>
+            <th>
+                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="tov">Turnover Rate</button>
+            </th>
+            <th>
+                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="usg">Usage Rate</button>
+            </th>
+
+            </thead>
+            <tbody>
+            <tr ng-repeat = "player in playerCollection">
+                <td>{{player.name}}</td>
+                <td>{{player.fga0}}%</td>
+                <td>{{player.fgp0}}%</td>
+                <td>{{player.fga8}}%</td>
+                <td>{{player.fgp8}}%</td>
+                <td>{{player.fga16}}%</td>
+                <td>{{player.fgp16}}%</td>
+                <td>{{player.fga24}}%</td>
+                <td>{{player.fgp24}}%</td>
+                <td>{{player.ast}}%</td>
+                <td>{{player.tov}}%</td>
+                <td>{{player.usg}}%</td>
+            </tr>
+            </tbody>
+
+        </table>
+    </div>
+</div>
+</body>
+<script>
+
+    var app = angular.module("myApp",['smart-table']);
+
+    app.controller("allPlayersController", function ($scope, $http) {
+
+
+
+        //Get JSON
+        query= "http://localhost:8080/getall";
+        $.ajax({url: query, crossDomain: true, dataType: 'json', type: 'GET'})
+            .done(function (json) {
+                $scope.playerList = json;
+                console.log($scope.playerList);
+                $scope.$apply();
+            })
+            .fail(function () {
+                alert("Error");
+            });
+
+    });
+</script>
+</html>

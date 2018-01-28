@@ -1,0 +1,40 @@
+link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css', integrity='sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb', crossorigin='anonymous')
+script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js')
+script(src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js', integrity='sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh', crossorigin='anonymous')
+script(src='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js', integrity='sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ', crossorigin='anonymous')
+include navbar.html
+div.container
+img(src='https://nba-players.herokuapp.com/players/'+lname+'/'+fname,
+alt='image not found')
+table.table.table-bordered
+
+    thead
+    tr
+        th Name
+        th Team
+        th FG Attempts% <8ft
+        th FG% <8ft
+        th FG Attempts% 8-16ft
+        th FG% 8-16ft
+        th FG Attempts% 16-24ft
+        th FG% 16-24ft
+        th FG Attempts% 24+ft
+        th FG% 24+ft
+        th Assist Rate
+        th Turnover Rate
+        th Usage Rate
+    tbody
+    tr
+        td #{player.name}
+        td #{player.team}
+        td #{player.fga0}%
+        td #{player.fgp0}%
+        td #{player.fga8}%
+        td #{player.fgp8}%
+        td #{player.fga16}%
+        td #{player.fgp16}%
+        td #{player.fga24}%
+        td #{player.fgp24}%
+        td #{player.ast}%
+        td #{player.tov}%
+        td #{player.usg}%
