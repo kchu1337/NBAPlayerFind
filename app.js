@@ -14,11 +14,18 @@ const MongoStore = require('connect-mongo')(session);
 const flash = require('express-flash');
 const path = require('path');
 const mongoose = require('mongoose');
-const passport = require('passport');
 const expressValidator = require('express-validator');
 const expressStatusMonitor = require('express-status-monitor');
 const sass = require('node-sass-middleware');
 const multer = require('multer');
+const Player = require('./models/Player');
+const shoot5Json = require("./json/shoot5");
+const shoot8Json = require("./json/shoot8");
+const shootZoneJson = require("./json/shootzone");
+const driveStatsJson = require("./json/drives");
+const catchShootStatsJson = require("./json/catchshoot");
+const usageStatsJson = require("./json/usage");
+
 
 const upload = multer({ dest: path.join(__dirname, 'uploads') });
 
@@ -31,9 +38,6 @@ dotenv.load({ path: '.env.example' });
  * Controllers (route handlers).
  */
 const homeController = require('./controllers/home');
-const userController = require('./controllers/user');
-const apiController = require('./controllers/api');
-const contactController = require('./controllers/contact');
 
 /**
  * API keys and Passport configuration.
@@ -73,170 +77,175 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressValidator());
-app.use(session({
+/*app.use(session({
   resave: true,
   saveUninitialized: true,
-  secret: process.env.SESSION_SECRET,
+  //secret: process.env.SESSION_SECRET,
   store: new MongoStore({
     url: process.env.MONGODB_URI || process.env.MONGOLAB_URI,
     autoReconnect: true,
     clear_interval: 3600
   })
-}));
-app.use(passport.initialize());
-app.use(passport.session());
-app.use(flash());
-app.use((req, res, next) => {
-  if (req.path === '/api/upload') {
-    next();
-  } else {
-    lusca.csrf()(req, res, next);
-  }
-});
-app.use(lusca.xframe('SAMEORIGIN'));
-app.use(lusca.xssProtection(true));
-app.use((req, res, next) => {
-  res.locals.user = req.user;
-  next();
-});
-app.use((req, res, next) => {
-  // After successful login, redirect back to the intended page
-  if (!req.user &&
-      req.path !== '/login' &&
-      req.path !== '/signup' &&
-      !req.path.match(/^\/auth/) &&
-      !req.path.match(/\./)) {
-    req.session.returnTo = req.path;
-  } else if (req.user &&
-      req.path === '/account') {
-    req.session.returnTo = req.path;
-  }
-  next();
-});
-app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
-
+}));*/
 /**
  * Primary app routes.
  */
 
 
 app.get('/', homeController.index);
-/*
-app.get('/login', userController.getLogin);
-app.post('/login', userController.postLogin);
-app.get('/logout', userController.logout);
-app.get('/forgot', userController.getForgot);
-app.post('/forgot', userController.postForgot);
-app.get('/reset/:token', userController.getReset);
-app.post('/reset/:token', userController.postReset);
-app.get('/signup', userController.getSignup);
-app.post('/signup', userController.postSignup);
-app.get('/contact', contactController.getContact);
-app.post('/contact', contactController.postContact);
-app.get('/account', passportConfig.isAuthenticated, userController.getAccount);
-app.post('/account/profile', passportConfig.isAuthenticated, userController.postUpdateProfile);
-app.post('/account/password', passportConfig.isAuthenticated, userController.postUpdatePassword);
-app.post('/account/delete', passportConfig.isAuthenticated, userController.postDeleteAccount);
-app.get('/account/unlink/:provider', passportConfig.isAuthenticated, userController.getOauthUnlink);
-*/
-/**
- * API examples routes.
- */
-/*app.get('/api', apiController.getApi);
-app.get('/api/lastfm', apiController.getLastfm);
-app.get('/api/nyt', apiController.getNewYorkTimes);
-app.get('/api/aviary', apiController.getAviary);
-app.get('/api/steam', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getSteam);
-app.get('/api/stripe', apiController.getStripe);
-app.post('/api/stripe', apiController.postStripe);
-app.get('/api/scraping', apiController.getScraping);
-app.get('/api/twilio', apiController.getTwilio);
-app.post('/api/twilio', apiController.postTwilio);
-app.get('/api/clockwork', apiController.getClockwork);
-app.post('/api/clockwork', apiController.postClockwork);
-app.get('/api/foursquare', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getFoursquare);
-app.get('/api/tumblr', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getTumblr);
-app.get('/api/facebook', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getFacebook);
-app.get('/api/github', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getGithub);
-app.get('/api/twitter', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getTwitter);
-app.post('/api/twitter', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.postTwitter);
-app.get('/api/linkedin', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getLinkedin);
-app.get('/api/instagram', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getInstagram);
-app.get('/api/paypal', apiController.getPayPal);
-app.get('/api/paypal/success', apiController.getPayPalSuccess);
-app.get('/api/paypal/cancel', apiController.getPayPalCancel);
-app.get('/api/lob', apiController.getLob);
-app.get('/api/upload', apiController.getFileUpload);
-app.post('/api/upload', upload.single('myFile'), apiController.postFileUpload);
-app.get('/api/pinterest', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getPinterest);
-app.post('/api/pinterest', passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.postPinterest);
-app.get('/api/google-maps', apiController.getGoogleMaps);
-app.get('/helloworld', function(req, res){
-    res.send({"message":"Hello World!"});
-});
-*/
 app.get('/sample', homeController.sample);
 app.get('/search', homeController.search);
 app.get('/details', homeController.details);
 app.get('/playerlist', homeController.playerList);
 app.get('/getall', homeController.getAllPlayers);
+app.get('/build', homeController.build);
 
-
-/**
- * OAuth authentication routes. (Sign in)
- */
-/*
-app.get('/auth/instagram', passport.authenticate('instagram'));
-app.get('/auth/instagram/callback', passport.authenticate('instagram', { failureRedirect: '/login' }), (req, res) => {
-  res.redirect(req.session.returnTo || '/');
-});
-app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email', 'public_profile'] }));
-app.get('/auth/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/login' }), (req, res) => {
-  res.redirect(req.session.returnTo || '/');
-});
-app.get('/auth/github', passport.authenticate('github'));
-app.get('/auth/github/callback', passport.authenticate('github', { failureRedirect: '/login' }), (req, res) => {
-  res.redirect(req.session.returnTo || '/');
-});
-app.get('/auth/google', passport.authenticate('google', { scope: 'profile email' }));
-app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/login' }), (req, res) => {
-  res.redirect(req.session.returnTo || '/');
-});
-app.get('/auth/twitter', passport.authenticate('twitter'));
-app.get('/auth/twitter/callback', passport.authenticate('twitter', { failureRedirect: '/login' }), (req, res) => {
-  res.redirect(req.session.returnTo || '/');
-});
-app.get('/auth/linkedin', passport.authenticate('linkedin', { state: 'SOME STATE' }));
-app.get('/auth/linkedin/callback', passport.authenticate('linkedin', { failureRedirect: '/login' }), (req, res) => {
-  res.redirect(req.session.returnTo || '/');
-});
-
-/**
- * OAuth authorization routes. (API examples)
- */
-/*
-app.get('/auth/foursquare', passport.authorize('foursquare'));
-app.get('/auth/foursquare/callback', passport.authorize('foursquare', { failureRedirect: '/api' }), (req, res) => {
-  res.redirect('/api/foursquare');
-});
-app.get('/auth/tumblr', passport.authorize('tumblr'));
-app.get('/auth/tumblr/callback', passport.authorize('tumblr', { failureRedirect: '/api' }), (req, res) => {
-  res.redirect('/api/tumblr');
-});
-app.get('/auth/steam', passport.authorize('openid', { state: 'SOME STATE' }));
-app.get('/auth/steam/callback', passport.authorize('openid', { failureRedirect: '/login' }), (req, res) => {
-  res.redirect(req.session.returnTo || '/');
-});
-app.get('/auth/pinterest', passport.authorize('pinterest', { scope: 'read_public write_public' }));
-app.get('/auth/pinterest/callback', passport.authorize('pinterest', { failureRedirect: '/login' }), (req, res) => {
-  res.redirect('/api/pinterest');
-});*/
-
-/**
- * Error Handler.
- */
 app.use(errorHandler());
+/**
+ * Initialize Database
+ */
 
+
+var shoot5Stats = shoot5Json.resultSets.rowSet;
+/*
+...
+<5ft
+5	"FGM"
+6	"FGA"
+7	"FG_PCT"
+5-9ft
+8	"FGM"
+9	"FGA"
+10	"FG_PCT"
+*/
+
+//http://stats.nba.com/stats/leaguedashplayershotlocations?DateFrom=&DateTo=&DistanceRange=8ft+Range&Division=&GameScope=&GameSegment=&Height=&LastNGames=0&LeagueID=00&Location=&MeasureType=Base&Month=0&OpponentTeamID=0&Outcome=&PORound=0&PaceAdjust=N&PerMode=PerGame&Period=0&PlayerExperience=&PlayerPosition=G&PlusMinus=N&Rank=N&Season=2017-18&SeasonSegment=&SeasonType=Regular+Season&StarterBench=&TeamID=0&VsConference=&VsDivision=
+var shoot8Stats = shoot8Json.resultSets.rowSet;
+/*
+0	"PLAYER_ID"
+1	"PLAYER_NAME"
+2	"TEAM_ID"
+3	"TEAM_eABBREVIATION"
+4	"AGE"
+<8ft
+5	"FGM"
+6	"FGA"
+7	"FG_PCT"
+9-16ft
+8	"FGM"
+9	"FGA"
+10	"FG_PCT"
+16-24ft
+11	"FGM"
+12	"FGA"
+13	"FG_PCT"
+24ft+
+14	"FGM"
+15	"FGA"
+16	"FG_PCT"
+backcourt
+17	"FGM"
+18	"FGA"
+19	"FG_PCT"
+*/
+
+
+var shootZoneStats = shootZoneJson.resultSets.rowSet;
+//var Player = mongoose.model('Player', playerSchema);
+/*
+...
+in restricted zone
+5	"FGM"
+6	"FGA"
+7	"FG_PCT"
+...
+*/
+
+
+//http://stats.nba.com/stats/leaguedashptstats?DateFrom=&DateTo=&Division=&GameScope=&LastNGames=0&LeagueID=00&Location=&Month=0&OpponentTeamID=0&Outcome=&PORound=0&PerMode=PerGame&PlayerExperience=&PlayerOrTeam=Player&PlayerPosition=G&PtMeasureType=Drives&Season=2017-18&SeasonSegment=&SeasonType=Regular+Season&StarterBench=&TeamID=0&VsConference=&VsDivision=
+var driveStats = driveStatsJson.resultSets[0].rowSet;
+
+/*
+8	"DRIVES"
+9	"DRIVE_FGM"
+10	"DRIVE_FGA"
+...
+*/
+
+
+
+//http://stats.nba.com/stats/leaguedashptstats?DateFrom=&DateTo=&Division=&GameScope=&LastNGames=0&LeagueID=00&Location=&Month=0&OpponentTeamID=0&Outcome=&PORound=0&PerMode=PerGame&PlayerExperience=&PlayerOrTeam=Player&PlayerPosition=G&PtMeasureType=CatchandShoot&Season=2017-18&SeasonSegment=&SeasonType=Regular+Season&StarterBench=&TeamID=0&VsConference=&VsDivision=
+var catchShootStats = catchShootStatsJson.resultSets[0].rowSet;
+/*
+...
+8	"CATCH_SHOOT_FGM"
+9	"CATCH_SHOOT_FGA"
+10	"CATCH_SHOOT_FG_PCT"
+...
+ */
+
+
+
+
+//http://stats.nba.com/stats/leaguedashplayerstats?&DateFrom=&DateTo=&Division=&GameScope=&GameSegment=&LastNGames=0&LeagueID=00&Location=&MeasureType=Usage&Month=0&OpponentTeamID=0&Outcome=&PORound=0&PaceAdjust=N&PerMode=PerGame&Period=0&PlayerExperience=&PlayerPosition=G&PlusMinus=N&Rank=N&Season=2017-18&SeasonSegment=&SeasonType=Regular+Season&ShotClockRange=&StarterBench=&TeamID=0&VsConference=&VsDivision=
+var usageStats = usageStatsJson.resultSets[0].rowSet;
+/*
+...
+10	"USG_PCT"
+...
+20	"PCT_AST"
+21	"PCT_TOV"
+...
+ */
+
+
+for(var i =0; i<shoot8Stats.length/5;i++) {
+    if (shoot8Stats[i][0] == driveStats[i][0] && shoot8Stats[i][0] == catchShootStats[i][0] && driveStats[i][7] != null
+        && driveStats[i][7]/driveStats[i][4] > 10) {
+        //Get field goals from various areas at the rim, close range, mid range, and 3pters
+        var totalFga = shoot8Stats[i][6] + shoot8Stats[i][9] + shoot8Stats[i][12] + shoot8Stats[i][15]
+        var totalFgm = shoot8Stats[i][5] + shoot8Stats[i][8] + shoot8Stats[i][11] + shoot8Stats[i][14]
+        var total3ptFga = shoot8Stats[i][15];
+        var total3ptFgm = shoot8Stats[i][14];
+        var totalRimFga = shootZoneStats[i][6];
+        var totalRimFgm = shootZoneStats[i][5];
+        var totalCloseFga = shoot5Stats[i][6] + shoot5Stats[i][9] - totalRimFga;
+        var totalCloseFgm = shoot5Stats[i][5] + shoot5Stats[i][8] - totalRimFgm;;
+        var totalMidrangeFga = totalFga - total3ptFga - totalCloseFga - totalRimFga;
+        var totalMidrangeFgm = totalFgm - total3ptFgm - totalCloseFgm - totalRimFgm;
+
+
+        var driveFga = (driveStats[i][10] / totalFga * 100).toFixed(2)
+        var catchShootFga = (catchShootStats[i][9] / totalFga * 100).toFixed(2)
+
+        var player1 = new Player({
+            _id: shoot8Stats[i][0],
+            teamId: shoot8Stats[i][2],
+            name: shoot8Stats[i][1],
+            team: shoot8Stats[i][3],
+            rimfga: (totalRimFga / totalFga * 100).toFixed(2),
+            rimfgp: (totalRimFgm / totalRimFga * 100).toFixed(2),
+            closefga: (totalCloseFga / totalFga * 100).toFixed(2),
+            closefgp: (totalCloseFgm / totalCloseFga * 100).toFixed(2),
+            midrangefga: (totalMidrangeFga / totalFga * 100).toFixed(2),
+            midrangefgp: (totalMidrangeFgm / totalMidrangeFga * 100).toFixed(2),
+            threefga: (total3ptFga / totalFga * 100).toFixed(2),
+            threefgp: (total3ptFgm / total3ptFga * 100).toFixed(2),
+            drivefga: driveFga,
+            catchshootfga : catchShootFga,
+            ast: (usageStats[i][20]*100).toFixed(2),
+            tov: (usageStats[i][21]*100).toFixed(2),
+            usg: (usageStats[i][10]*100).toFixed(2)
+
+        });
+        console.log(player1);
+        /*player1.save(function (err) {
+            if (err) {
+                console.log(err);
+            }
+        })*/
+    }
+}
 /**
  * Start Express server.
  */
