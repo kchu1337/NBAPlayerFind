@@ -4,7 +4,7 @@ script(src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.m
 script(src='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js', integrity='sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ', crossorigin='anonymous')
 include navbar.html
 div.container
-img(src='https://nba-players.herokuapp.com/players/'+lname+'/'+fname,
+img(src='https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/'+player.teamId+'/2017/260x190/'+player.id+'.png',
 alt='image not found')
 table.table.table-bordered
 
@@ -27,14 +27,14 @@ table.table.table-bordered
     tr
         td #{player.name}
         td #{player.team}
-        td #{player.fga0}%
-        td #{player.fgp0}%
-        td #{player.fga8}%
-        td #{player.fgp8}%
-        td #{player.fga16}%
-        td #{player.fgp16}%
-        td #{player.fga24}%
-        td #{player.fgp24}%
+        td #{player.rimFga}%
+        td #{player.rimFgp}%
+        td #{player.closeFga}%
+        td #{player.closeFgp}%
+        td #{player.midrangeFga}%
+        td #{player.midrangeFgp}%
+        td #{player.threeFga}%
+        td #{player.threeFgp}%
         td #{player.ast}%
         td #{player.tov}%
         td #{player.usg}%

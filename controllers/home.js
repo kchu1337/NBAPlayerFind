@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const request = require('request');
+const mongoose = require('mongoose')
 const Player = require('../models/Player');
 
 
@@ -50,14 +52,14 @@ exports.getplayer = (req, res) => {
 exports.sample = (req, res) => {
    Player.find({}, function(err, results){
        //parse all query parameters into numbers.
-       var fga0 = parseFloat(req.query.fga0);
-       var fgp0 = parseFloat(req.query.fgp0);
-       var fga8 = parseFloat(req.query.fga8);
-       var fgp8 = parseFloat(req.query.fgp8);
-       var fga16 = parseFloat(req.query.fga16);
-       var fgp16 = parseFloat(req.query.fgp16);
-       var fga24 = parseFloat(req.query.fga24);
-       var fgp24 = parseFloat(req.query.fgp24);
+       var rimFga = parseFloat(req.query.rimFga);
+       var rimFgp = parseFloat(req.query.rimFgp);
+       var closeFga = parseFloat(req.query.closeFga);
+       var closeFgp = parseFloat(req.query.closeFgp);
+       var midrangeFga = parseFloat(req.query.midrangeFga);
+       var midrangeFgp = parseFloat(req.query.midrangeFgp);
+       var threeFga = parseFloat(req.query.threeFga);
+       var threeFgp = parseFloat(req.query.threeFgp);
        var ast = parseFloat(req.query.ast);
        var tov = parseFloat(req.query.tov);
        var usg = parseFloat(req.query.usg);
@@ -70,21 +72,21 @@ exports.sample = (req, res) => {
           //Calculates the sum of the differnce between given
           //parameters and player stats
           var difference=0;
-          difference+=Math.abs(player.fga0-fga0);
-          difference+=Math.abs(player.fgp0-fgp0);
-          difference+=Math.abs(player.fga8-fga8);
-          difference+=Math.abs(player.fgp8-fgp8);
-          difference+=Math.abs(player.fga16-fga16);
-          difference+=Math.abs(player.fgp16-fgp16);
-          difference+=Math.abs(player.fga24-fga24);
-          difference+=Math.abs(player.fgp24-fgp24);
+          difference+=Math.abs(player.rimFga-rimFga);
+          difference+=Math.abs(player.rimFgp-rimFgp);
+          difference+=Math.abs(player.closeFga-closeFga);
+          difference+=Math.abs(player.closeFgp-closeFgp);
+          difference+=Math.abs(player.midrangeFga-midrangeFga);
+          difference+=Math.abs(player.midrangeFgp-midrangeFgp);
+          difference+=Math.abs(player.threeFga-threeFga);
+          difference+=Math.abs(player.threeFgp-threeFgp);
           difference+=Math.abs(player.ast-ast);
           difference+=Math.abs(player.tov-tov);
           difference+=Math.abs(player.usg-usg);
           var fullName = player.name.split(' ');
           var fname = fullName[0].trim();
           var lname = fullName[1].trim();
-          answer.push({'name':player.name, 'id':player._id, 'fname':fname, 'lname':lname,
+          answer.push({'name':player.name, 'id':player._id, 'teamId':player.teamId, 'fname':fname, 'lname':lname,
               'diff':difference});
 
       })
@@ -97,4 +99,19 @@ exports.sample = (req, res) => {
        res.send(answer);
     });
 
+};
+
+
+exports.build = (req, res) => {
+    /*var url = "http://stats.nba.com/stats/leaguedashplayershotlocations?DateFrom=&DateTo=&DistanceRange=8ft+Range&Division=&GameScope=&GameSegment=&Height=&LastNGames=0&LeagueID=00&Location=&MeasureType=Base&Month=0&OpponentTeamID=0&Outcome=&PORound=0&PaceAdjust=N&PerMode=PerGame&Period=0&PlayerExperience=&PlayerPosition=G&PlusMinus=N&Rank=N&Season=2017-18&SeasonSegment=&SeasonType=Regular+Season&StarterBench=&TeamID=0&VsConference=&VsDivision="
+    request(url, function (error, response, body) {
+        console.log('error:', error); // Print the error if one occurred and handle it
+        console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+        var body2 = JSON.parse(body);
+        console.log('body', body);
+        res.send(body2);
+    });*/
+
+
+    res.send("");
 };
