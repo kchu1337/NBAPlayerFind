@@ -144,11 +144,12 @@ for(var i =0; i<shoot8Stats.length;i++) {
 
         });
         //console.log(player1);
+        /*
         player1.save(function (err) {
             if (err) {
                 console.log(name + " has an error");
             }
-        })
+        })*/
     }
 
 }
