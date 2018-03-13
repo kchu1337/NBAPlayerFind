@@ -7,125 +7,138 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular.min.js"></script>
+    <script type = "text/javascript" src='/js/app_angular.js'></script>
+    <style type="text/css">
+        .visible
+        {
+            display: block;
+            opacity: 1;
+            transition: opacity .5s linear;
+        }
+
+        .hidden
+        {
+            display: none;
+            opacity: 0;
+            transition: display 0s .5s, opacity .5s linear;
+        }
+
+    </style>
     <title>Title</title>
 </head>
-<body data-ng-app>
-<div class ="container">
-    <div data-ng-controller="players">
-        <div id="accordion" role="tablist" aria-multiselectable="true">
-            <div class="card">
-                <div class="card-header" role="tab" id="headingOne">
-                    <h5 class="mb-0">
-                        <a data-toggle="collapse" data-parent="#accordion" href="#search" aria-expanded="false" aria-controls="collapseOne">
-                            Find Player
-                        </a>
-                    </h5>
-                </div>
-                <div id="search" class="collapse show" role="tabpanel" aria-labelledby="headingOne">
-                    <div class="card-block container">
-                        <div class="form-group row">
-                            <label for="rimFga" class="col-3 col-form-label">FG Attempt % at the basket</label>
-                            <div class="col-4">
-                                <input type="number" id = "rimFga"/>
-                            </div>
-                        </div>
+<body data-ng-app = "playerSearch">
+<div class="container">
+    <div data-ng-controller="mainController">
+        <div class="card">
 
-                        <div class="form-group row">
-                            <label for="rimDD" class="col-3 col-form-label">FG Shooting % at the basket</label>
-                            <div class="col-4">
-                                <select id = "rimDD" ng-model="rimFgp" ng-options="x.label for x in rim">
-                                </select>
-                            </div>
+            <div id="page1" class="visible">
+                <div class="card-block container">
+                    <div class="form-group row">
+                        <label for="rimFga" class="col-3 col-form-label">FG Attempt % at the basket</label>
+                        <div class="col-4">
+                            <input type="number" id="rimFga"/>
                         </div>
-
-                        <div class="form-group row">
-                            <label for="closeFga" class="col-3 col-form-label">FG Attempt % at close range</label>
-                            <div class="col-4">
-                                <input type="number" id = "closeFga"/>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label for="closeFgp" class="col-3 col-form-label">FG Shooting % at close range</label>
-                            <div class="col-4">
-                                <div class="dropdown">
-                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="closeFgp" data-toggle="dropdown" aria-haspopup="true"
-                                            aria-expanded="false">Select FGA</button>
-                                    <div class="dropdown-menu" id = "closeDD" aria-labelledby="closeFgp">
-                                        <a class="dropdown-item">Low</a>
-                                        <a class="dropdown-item">Medium</a>
-                                        <a class="dropdown-item">High</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label for="midrangeFga" class="col-3 col-form-label">FG Attempt % at midrange</label>
-                            <div class="col-4">
-                                <input type="number" id = "midrangeFga"/>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label for="midrangeFgp" class="col-3 col-form-label">FG Shooting % at midrange</label>
-                            <div class="col-4">
-                                <input type="number" id = "midrangeFgp"/>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label for="threeFga" class="col-3 col-form-label">FG Attempt % at 3-pointers</label>
-                            <div class="col-4">
-                                <input type="number" id = "threeFga"/>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label for="threeFgp" class="col-3 col-form-label">FG Shooting % at 3-pointers</label>
-                            <div class="col-4">
-                                <input type="number" id = "threeFgp"/>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label for="ast" class="col-3 col-form-label">Assist Rate</label>
-                            <div class="col-4">
-                                <input type="number" id = "ast"/>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label for="tov" class="col-3 col-form-label">Turnover Rate</label>
-                            <div class="col-4">
-                                <input type="number" id = "tov"/>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label for="usg" class="col-3 col-form-label">Usage Rate</label>
-                            <div class="col-4">
-                                <input type="number" id = "usg"/>
-                            </div>
-                        </div>
-                        <br/>
-                        <div class="form-group row">
-                            <button type="button" class="btn btn-primary col-3" ng-click = "submit()">search</button>
-                        </div>
-                        <br/>
                     </div>
+
+                    <div class="form-group row">
+                        <label for="rimFgp" class="col-3 col-form-label">FG Shooting % at the basket</label>
+                        <div class="col-4">
+                            <select id="rimFgp" ng-model="rimSelected" ng-options="x.label for x in rim.options">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="closeFga" class="col-3 col-form-label">FG Attempt % at close range</label>
+                        <div class="col-4">
+                            <input type="number" id="closeFga"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="closeFgp" class="col-3 col-form-label">FG Shooting % at close range</label>
+                        <div class="col-4">
+                            <select id="closeFgp" ng-model="closeSelected" ng-options="x.label for x in close.options">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="midrangeFga" class="col-3 col-form-label">FG Attempt % at midrange</label>
+                        <div class="col-4">
+                            <input type="number" id="midrangeFga"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="midrangeFgp" class="col-3 col-form-label">FG Shooting % at midrange</label>
+                        <div class="col-4">
+                            <select id="midrangeFgp" ng-model="midrangeSelected"
+                                    ng-options="x.label for x in midrange.options">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="threeFga" class="col-3 col-form-label">FG Attempt % at 3-pointers</label>
+                        <div class="col-4">
+                            <input type="number" id="threeFga"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="threeFgp" class="col-3 col-form-label">FG Shooting % at 3-pointers</label>
+                        <div class="col-4">
+                            <select id="threeFgp" ng-model="threeSelected" ng-options="x.label for x in three.options">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="ast" class="col-3 col-form-label">Assist Rate</label>
+                        <div class="col-4">
+                            <input type="number" id="ast"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="tov" class="col-3 col-form-label">Turnover Rate</label>
+                        <div class="col-4">
+                            <input type="number" id="tov"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="usg" class="col-3 col-form-label">Usage Rate</label>
+                        <div class="col-4">
+                            <input type="number" id="usg"/>
+                        </div>
+                    </div>
+                    <br/>
+                    <div class="form-group row">
+                        <button type="button" id="searchButton" class="btn btn-primary col-3" ng-click="submit()">search</button>
+                    </div>
+                    <br/>
                 </div>
-                <div class = "col-8">
-                    <h3>Top 3 Results:</h3>
-                    <p data-ng-repeat="player in players">
-                        <a ng-href = "/details?name={{player.name}}">
-                            {{ player.name }}
-                            <br/>
-                            <img ng-src = "https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/{{player.teamId}}/2017/260x190/{{player.id}}.png" alt = "image not found"
-                                 onError="this.onerror=null;this.src='http://sportingindia.com/sites/default/files/profile_picture/blank_headshot_3_64_20.png';"/>
-                        </a>
-                    </p>
+            </div>
+            <div id="page2" class="hidden">
+                <h3>Top 3 Results:</h3>
+                <p data-ng-repeat="player in players">
+                    <a ng-href="/details?name={{player.name}}">
+                        {{ player.name }}
+                        <br/>
+                        <img ng-src="https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/{{player.teamId}}/2017/260x190/{{player.id}}.png"
+                             alt="image not found"
+                             onError="this.onerror=null;this.src='http://sportingindia.com/sites/default/files/profile_picture/blank_headshot_3_64_20.png';"/>
+                    </a>
+                </p>
+                <br/>
+                <div class="form-group row">
+                    <button type="button" id="backButton" class="btn btn-primary col-3 col-offset-1">Back</button>
                 </div>
+            </div>
+            <div class="hidden" id = "loading">
+                <img src = "https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif" width="50%" height="85%"/>
             </div>
         </div>
     </div>
@@ -133,8 +146,52 @@
 
 <script>
 
-
     $('#headingOne').collapse('hide')
+
+    $( "#toPage1" ).click(function() {
+        $( "#page2" ).attr('class', 'hidden');
+        $( "#page3" ).attr('class', 'visible');
+        setTimeout(function() {
+            $( "#page1" ).attr('class', 'visible')
+            $( "#page3" ).attr('class', 'hidden')
+            ;}, 700)
+    });
+
+    $( "#toPage2" ).click(function() {
+        $( "#page2" ).attr('class', 'hidden');
+        $( "#page3" ).attr('class', 'visible');
+        setTimeout(function() {
+            $( "#page1" ).attr('class', 'visible')
+            $( "#page3" ).attr('class', 'hidden')
+            ;}, 700)
+    });
+
+    $( "#toPage3" ).click(function() {
+        $( "#page1" ).attr('class', 'hidden');
+        $( "#page3" ).attr('class', 'visible');
+        setTimeout(function() {
+            $( "#page2" ).attr('class', 'visible')
+            $( "#page3" ).attr('class', 'hidden')
+            ;}, 700)
+    });
+
+    $( "#searchButton" ).click(function() {
+        $( "#page1" ).attr('class', 'hidden');
+        $( "#loading" ).attr('class', 'visible');
+        setTimeout(function() {
+            $( "#page2" ).attr('class', 'visible')
+            $( "#loading" ).attr('class', 'hidden')
+            ;}, 1200)
+    });
+
+    $( "#backButton" ).click(function() {
+        $( "#page2" ).attr('class', 'hidden');
+        $( "#loading" ).attr('class', 'visible');
+        setTimeout(function() {
+            $( "#page1" ).attr('class', 'visible')
+            $( "#loading" ).attr('class', 'hidden')
+            ;}, 400)
+    });
 
     $('#closeDD').click(function(){
         $(".btn:first-child").text($(this).text());
@@ -142,55 +199,6 @@
         alert(document.getElementById("rimFgp").value);
     });
 
-    function players($scope, $http) {
 
-
-        $scope.submit = function () {
-            //Get all parameters from DOM
-            var rimFga = document.getElementById("rimFga").value;
-            var rimFgp = document.getElementById("rimFgp").value;
-            var closeFga = document.getElementById("closeFga").value;
-            var closeFgp = document.getElementById("closeFgp").value;
-            var midrangeFga = document.getElementById("midrangeFga").value;
-            var midrangeFgp = document.getElementById("midrangeFgp").value;
-            var threeFga = document.getElementById("threeFga").value;
-            var threeFgp = document.getElementById("threeFgp").value;
-            var ast = document.getElementById("ast").value;
-            var tov = document.getElementById("tov").value;
-            var usg = document.getElementById("usg").value;
-
-            //Find percentages if sum != 100
-            var fgaTotal = rimFga+closeFga+midrangeFga+threeFga;
-            rimFga = rimFga/fgaTotal;
-            closeFga = closeFga/fgaTotal;
-            midrangeFga = midrangeFga/fgaTotal;
-            threeFga = threeFga/fgaTotal;
-
-            //Create url
-            var query = "http://localhost:8080/sample?"
-            query+="rimFga="+rimFga;
-            query+="&rimFgp="+rimFgp;
-            query+="&closeFga="+closeFga;
-            query+="&closeFgp="+closeFgp;
-            query+="&midrangeFga="+midrangeFga;
-            query+="&midrangeFgp="+midrangeFgp;
-            query+="&threeFga="+threeFga;
-            query+="&threeFgp="+threeFgp;
-            query+="&ast="+ast;
-            query+="&tov="+tov;
-            query+="&usg="+usg;
-            console.log(query);
-
-            //Get JSON
-            $.ajax({url: query, crossDomain: true, dataType: 'json', type: 'GET'})
-                .done(function (json) {
-                    $scope.players = json;
-                    $scope.$apply();
-                })
-                .fail(function () {
-                    alert("Error");
-                });
-        }
-    }
 </script>
 </html>
