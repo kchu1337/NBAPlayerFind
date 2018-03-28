@@ -8,14 +8,18 @@ const playerSchema = new mongoose.Schema({
     team: String,
     rimFga: Number,
     rimFgp: Number,
+    //5-10 ft
     closeFga: Number,
     closeFgp: Number,
+    //11-24 ft
     midrangeFga: Number,
     midrangeFgp: Number,
     threeFga: Number,
     threeFgp: Number,
     driveFga: Number,
     catchshootFga: Number,
+    postFga: Number,
+    pullupFga: Number,
     ast: Number,
     tov: Number,
     usg: Number

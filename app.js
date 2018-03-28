@@ -78,7 +78,7 @@ app.use(expressValidator());
  */
 
 
-app.get('/', homeController.index);
+app.get('/', homeController.search);
 app.get('/sample', homeController.sample);
 app.get('/search', homeController.search);
 app.get('/details', homeController.details);

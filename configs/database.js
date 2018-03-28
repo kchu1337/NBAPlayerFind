@@ -113,10 +113,13 @@ for(var i =0; i<shoot8Stats.length;i++) {
         var totalFgm = shoot8Stats[i][5] + shoot8Stats[i][8] + shoot8Stats[i][11] + shoot8Stats[i][14]
         var total3ptFga = shoot8Stats[i][15];
         var total3ptFgm = shoot8Stats[i][14];
+        //within circle
         var totalRimFga = shootZoneStats[i][6];
         var totalRimFgm = shootZoneStats[i][5];
+        //5-10 ft
         var totalCloseFga = shoot5Stats[i][6] + shoot5Stats[i][9] - totalRimFga;
         var totalCloseFgm = shoot5Stats[i][5] + shoot5Stats[i][8] - totalRimFgm;;
+        //11-24 ft
         var totalMidrangeFga = totalFga - total3ptFga - totalCloseFga - totalRimFga;
         var totalMidrangeFgm = totalFgm - total3ptFgm - totalCloseFgm - totalRimFgm;
 

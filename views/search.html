@@ -2,22 +2,25 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8"/>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css"
+          integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"
+            integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"
+            integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ"
+            crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular.min.js"></script>
-    <script type = "text/javascript" src='/js/app_angular.js'></script>
+    <script type="text/javascript" src='/js/app_angular.js'></script>
     <style type="text/css">
-        .visible
-        {
+        .visible {
             display: block;
             opacity: 1;
             transition: opacity .5s linear;
         }
 
-        .hidden
-        {
+        .hidden {
             display: none;
             opacity: 0;
             transition: display 0s .5s, opacity .5s linear;
@@ -26,7 +29,7 @@
     </style>
     <title>Title</title>
 </head>
-<body data-ng-app = "playerSearch">
+<body data-ng-app="playerSearch">
 <div class="container">
     <div data-ng-controller="mainController">
         <div class="card">
@@ -95,12 +98,18 @@
                     </div>
 
                     <div class="form-group row">
+                        <button type="button" id="toPage2" class="btn btn-primary col-3">Next</button>
+                    </div>
+                </div>
+            </div>
+            <div id="page2" class="hidden">
+                <div class="card-block container">
+                    <div class="form-group row">
                         <label for="ast" class="col-3 col-form-label">Assist Rate</label>
                         <div class="col-4">
                             <input type="number" id="ast"/>
                         </div>
                     </div>
-
                     <div class="form-group row">
                         <label for="tov" class="col-3 col-form-label">Turnover Rate</label>
                         <div class="col-4">
@@ -116,88 +125,69 @@
                     </div>
                     <br/>
                     <div class="form-group row">
-                        <button type="button" id="searchButton" class="btn btn-primary col-3" ng-click="submit()">search</button>
+                        <button type="button" id="searchButton" class="btn btn-primary col-3" ng-click="submit()">
+                            search
+                        </button>
                     </div>
-                    <br/>
                 </div>
-            </div>
-            <div id="page2" class="hidden">
-                <h3>Top 3 Results:</h3>
-                <p data-ng-repeat="player in players">
-                    <a ng-href="/details?name={{player.name}}">
-                        {{ player.name }}
-                        <br/>
-                        <img ng-src="https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/{{player.teamId}}/2017/260x190/{{player.id}}.png"
-                             alt="image not found"
-                             onError="this.onerror=null;this.src='http://sportingindia.com/sites/default/files/profile_picture/blank_headshot_3_64_20.png';"/>
-                    </a>
-                </p>
                 <br/>
-                <div class="form-group row">
-                    <button type="button" id="backButton" class="btn btn-primary col-3 col-offset-1">Back</button>
+            </div>
+            <div id="page3" class="hidden">
+                <div class="card-block container">
+                    <h3>Top 3 Results:</h3>
+                    <p data-ng-repeat="player in players">
+                        <a ng-href="/details?name={{player.name}}">
+                            {{ player.name }}
+                            <br/>
+                            <img ng-src="https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/{{player.teamId}}/2017/260x190/{{player.id}}.png"
+                                 alt="image not found"
+                                 onError="this.onerror=null;this.src='http://sportingindia.com/sites/default/files/profile_picture/blank_headshot_3_64_20.png';"/>
+                        </a>
+                    </p>
+                    <br/>
+                    <div class="form-group row">
+                        <button type="button" id="backButton" class="btn btn-primary col-3 col-offset-1">Back</button>
+                    </div>
                 </div>
             </div>
-            <div class="hidden" id = "loading">
-                <img src = "https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif" width="50%" height="85%"/>
+            <div class="hidden" id="loading">
+                <img src="https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif" width="50%" height="85%"/>
             </div>
         </div>
     </div>
+</div>
 </body>
 
 <script>
 
     $('#headingOne').collapse('hide')
 
-    $( "#toPage1" ).click(function() {
-        $( "#page2" ).attr('class', 'hidden');
-        $( "#page3" ).attr('class', 'visible');
-        setTimeout(function() {
-            $( "#page1" ).attr('class', 'visible')
-            $( "#page3" ).attr('class', 'hidden')
-            ;}, 700)
+
+    $("#toPage2").click(function () {
+        showPage("page2",500)
     });
 
-    $( "#toPage2" ).click(function() {
-        $( "#page2" ).attr('class', 'hidden');
-        $( "#page3" ).attr('class', 'visible');
-        setTimeout(function() {
-            $( "#page1" ).attr('class', 'visible')
-            $( "#page3" ).attr('class', 'hidden')
-            ;}, 700)
+
+    $("#searchButton").click(function () {
+        showPage("page3",1500)
     });
 
-    $( "#toPage3" ).click(function() {
-        $( "#page1" ).attr('class', 'hidden');
-        $( "#page3" ).attr('class', 'visible');
-        setTimeout(function() {
-            $( "#page2" ).attr('class', 'visible')
-            $( "#page3" ).attr('class', 'hidden')
-            ;}, 700)
+    $("#backButton").click(function () {
+        showPage("page1",500)
     });
 
-    $( "#searchButton" ).click(function() {
-        $( "#page1" ).attr('class', 'hidden');
-        $( "#loading" ).attr('class', 'visible');
-        setTimeout(function() {
-            $( "#page2" ).attr('class', 'visible')
-            $( "#loading" ).attr('class', 'hidden')
-            ;}, 1200)
-    });
 
-    $( "#backButton" ).click(function() {
-        $( "#page2" ).attr('class', 'hidden');
-        $( "#loading" ).attr('class', 'visible');
-        setTimeout(function() {
-            $( "#page1" ).attr('class', 'visible')
-            $( "#loading" ).attr('class', 'hidden')
-            ;}, 400)
-    });
-
-    $('#closeDD').click(function(){
-        $(".btn:first-child").text($(this).text());
-        document.getElementById("rimFgp").value='30'
-        alert(document.getElementById("rimFgp").value);
-    });
+    function showPage(page,time){
+        $("#page1").attr('class', 'hidden');
+        $("#page2").attr('class', 'hidden');
+        $("#page3").attr('class', 'hidden');
+        $("#loading").attr('class', 'visible');
+        setTimeout(function () {
+            $("#"+page).attr('class', 'visible')
+            $("#loading").attr('class', 'hidden')
+            ;
+        }, time)
+    }
 
 
 </script>

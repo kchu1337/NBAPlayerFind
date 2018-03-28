@@ -2,6 +2,8 @@ var playerSearch = angular.module('playerSearch', []);
 
 function mainController($scope, $http) {
 
+
+    //Add choices for dropdowns
     //replace with percentiles later
     $scope.rim = {options:[
         {label: "Very Low", value: 30},
