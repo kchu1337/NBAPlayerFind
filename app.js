@@ -82,9 +82,13 @@ app.get('/', homeController.search);
 app.get('/sample', homeController.sample);
 app.get('/search', homeController.search);
 app.get('/details', homeController.details);
+//shows webpage of all players
 app.get('/playerlist', homeController.playerList);
+//returns json list of all players
 app.get('/getall', homeController.getAllPlayers);
 app.get('/build', homeController.build);
+//returns percentile of fg%,ast,tov,usg
+app.get('/getPercentiles', homeController.getPercentiles);
 
 app.use(errorHandler());
 /**

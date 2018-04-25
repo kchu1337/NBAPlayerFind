@@ -104,25 +104,58 @@
             </div>
             <div id="page2" class="hidden">
                 <div class="card-block container">
+
                     <div class="form-group row">
-                        <label for="ast" class="col-3 col-form-label">Assist Rate</label>
+                        <label for="driveFga" class="col-3 col-form-label">% of drives</label>
                         <div class="col-4">
-                            <input type="number" id="ast"/>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="tov" class="col-3 col-form-label">Turnover Rate</label>
-                        <div class="col-4">
-                            <input type="number" id="tov"/>
+                            <input type="number" id="driveFga"/>
                         </div>
                     </div>
 
                     <div class="form-group row">
-                        <label for="usg" class="col-3 col-form-label">Usage Rate</label>
+                        <label for="CSFga" class="col-3 col-form-label">% of Catch and Shoot</label>
                         <div class="col-4">
-                            <input type="number" id="usg"/>
+                            <input type="number" id="CSFga"/>
                         </div>
                     </div>
+                    <br/>
+                    <div class="form-group row">
+                        <button type="button" id="toPage3" class="btn btn-primary col-3">Next</button>
+                    </div>
+                </div>
+            </div>
+            <div id="page3" class="hidden">
+                <div class="card-block container">
+
+                    <div class="form-group row">
+                        <label for="ast" class="col-3 col-form-label">Assist Rate</label>
+                        <div class="col-4">
+                            <select id="ast" ng-model="assistSelected"
+                                    ng-options="x.label for x in assist.options">
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="tov" class="col-3 col-form-label">Turnover Rate</label>
+                        <div class="col-4">
+                            <select id="tov" ng-model="turnoverSelected"
+                                    ng-options="x.label for x in turnover.options">
+                            </select>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group row">
+                        <label for="usg" class="col-3 col-form-label">Usage Rate</label>
+                        <div class="col-4">
+                            <select id="usg" ng-model="usageSelected"
+                                    ng-options="x.label for x in usage.options">
+                            </select>
+                        </div>
+                    </div>
+
+
                     <br/>
                     <div class="form-group row">
                         <button type="button" id="searchButton" class="btn btn-primary col-3" ng-click="submit()">
@@ -132,11 +165,12 @@
                 </div>
                 <br/>
             </div>
-            <div id="page3" class="hidden">
+
+            <div id="results" class="hidden">
                 <div class="card-block container">
-                    <h3>Top 3 Results:</h3>
+                    <h3>Top 5 Results:</h3>
                     <p data-ng-repeat="player in players">
-                        <a ng-href="/details?name={{player.name}}">
+                        <a ng-href="/details?id={{player.id}}">
                             {{ player.name }}
                             <br/>
                             <img ng-src="https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/{{player.teamId}}/2017/260x190/{{player.id}}.png"
@@ -151,7 +185,9 @@
                 </div>
             </div>
             <div class="hidden" id="loading">
-                <img src="https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif" width="50%" height="85%"/>
+                <img src="/loading.gif" width="35%" height="50%"/>
+
+                <h1>&#8194 &#8194 Loading</h1>
             </div>
         </div>
     </div>
@@ -167,9 +203,13 @@
         showPage("page2",500)
     });
 
+    $("#toPage3").click(function () {
+        showPage("page3",500)
+    });
+
 
     $("#searchButton").click(function () {
-        showPage("page3",1500)
+        showPage("results",1500)
     });
 
     $("#backButton").click(function () {
@@ -181,6 +221,7 @@
         $("#page1").attr('class', 'hidden');
         $("#page2").attr('class', 'hidden');
         $("#page3").attr('class', 'hidden');
+        $("#results").attr('class', 'hidden');
         $("#loading").attr('class', 'visible');
         setTimeout(function () {
             $("#"+page).attr('class', 'visible')
@@ -188,7 +229,6 @@
             ;
         }, time)
     }
-
 
 </script>
 </html>

@@ -30,7 +30,7 @@ exports.getAllPlayers = (req, res) => {
 };
 
 exports.details = (req, res) => {
-    Player.findOne({name:req.query.name}, function(err, result){
+    Player.findOne({_id:req.query.id}, function(err, result){
         console.log(result);
         var fullName = result.name.split(' ');
         var fname = fullName[0].trim();
@@ -40,12 +40,63 @@ exports.details = (req, res) => {
     });
 };
 
-
 exports.getplayer = (req, res) => {
     //var playerId = require('mongodb').ObjectID(req.query.id);
-    Player.findOne({name:req.query.name}, function(err, result){
+    Player.findOne({_id:req.query.id}, function(err, result){
         console.log(req.query.name);
         res.send(result);
+    });
+};
+
+//returns 1/6th percentiles of
+exports.getPercentiles = (req, res) => {
+    Player.find({},
+        {'rimFgp': true, 'closeFgp': true,'midrangeFgp': true, 'threeFgp': true, 'ast': true, 'tov': true, 'usg': true},
+        function(err, result) {
+        var length = result.length;
+        var rim = [];
+        var close = [];
+        var midrange = [];
+        var three = [];
+        var assist = [];
+        var turnover = [];
+        var usage = [];
+        for (var i = 0; i < length; i++) {
+            rim.push(Number(result[i].rimFgp));
+            close.push(Number(result[i].closeFgp));
+            midrange.push(Number(result[i].midrangeFgp));
+            three.push(Number(result[i].threeFgp));
+            assist.push(Number(result[i].ast));
+            turnover.push(Number(result[i].tov));
+            usage.push(Number(result[i].usg));
+            console.log(result[i].tov);
+        }
+
+        rim.sort(function(a,b) { return a - b; });
+        close.sort(function(a,b) { return a - b; });
+        midrange.sort(function(a,b) { return a - b;});
+        three.sort(function(a,b) { return a - b; });
+        assist.sort(function(a,b) { return a - b; });
+        turnover.sort(function(a,b) { return a - b; });
+        usage.sort(function(a,b) { return a - b; });
+
+        var percentile = Math.floor(length / 6);
+        var allPercentiles = [];
+
+        for (var i = 1; i < 6; i++) {
+            var data = {
+                'rimFgp' : rim[percentile*i],
+                'closeFgp' : close[percentile*i],
+                'midrangeFgp' : midrange[percentile*i],
+                'threeFgp' : three[percentile*i],
+                'ast' : assist[percentile*i],
+                'tov' : turnover[percentile*i],
+                'usg' : usage[percentile*i]
+            };
+            allPercentiles.push(data);
+            console.log(percentile*i + " " + turnover[percentile*i])
+        }
+        res.send(allPercentiles);
     });
 };
 
@@ -63,6 +114,8 @@ exports.sample = (req, res) => {
        var ast = parseFloat(req.query.ast);
        var tov = parseFloat(req.query.tov);
        var usg = parseFloat(req.query.usg);
+       var drive = parseFloat(req.query.drive);
+       var catchShoot = parseFloat(req.query.catchshoot);
        //"answer" will be the caculated list the api returns
        var answer=[];
        if (err){
@@ -75,14 +128,16 @@ exports.sample = (req, res) => {
           difference+=Math.abs(player.rimFga-rimFga);
           difference+=Math.abs(player.rimFgp-rimFgp);
           difference+=Math.abs(player.closeFga-closeFga);
-          difference+=Math.abs(player.closeFgp-closeFgp);
+          difference+=Math.abs(player.closeFgp-closeFgp)/2;
           difference+=Math.abs(player.midrangeFga-midrangeFga);
-          difference+=Math.abs(player.midrangeFgp-midrangeFgp);
+          difference+=Math.abs(player.midrangeFgp-midrangeFgp)/2;
           difference+=Math.abs(player.threeFga-threeFga);
-          difference+=Math.abs(player.threeFgp-threeFgp);
-          difference+=Math.abs(player.ast-ast);
-          difference+=Math.abs(player.tov-tov);
-          difference+=Math.abs(player.usg-usg);
+          difference+=Math.abs(player.threeFgp-threeFgp)/2;
+          difference+=Math.abs(player.ast-ast)/2;
+          difference+=Math.abs(player.tov-tov)/2;
+          difference+=Math.abs(player.usg-usg)/2;
+          difference+=Math.abs(player.driveFga-drive);
+          difference+=Math.abs(player.catchShootFga-catchShoot);
           var fullName = player.name.split(' ');
           var fname = fullName[0].trim();
           var lname = fullName[1].trim();
@@ -90,12 +145,12 @@ exports.sample = (req, res) => {
               'diff':difference});
 
       })
-       //soets the list by difference greatest->least
+       //sorts the list by difference greatest->least
        answer.sort(function(a,b){
            return a.diff-b.diff;
        });
-       //returns the top 3 values
-       answer=answer.slice(0,3);
+       //returns the top 5 values
+       answer=answer.slice(0,5);
        res.send(answer);
     });
 
