@@ -65,11 +65,19 @@ in restricted zone
 
 //http://stats.nba.com/stats/leaguedashptstats?DateFrom=&DateTo=&Division=&GameScope=&LastNGames=0&LeagueID=00&Location=&Month=0&OpponentTeamID=0&Outcome=&PORound=0&PerMode=PerGame&PlayerExperience=&PlayerOrTeam=Player&PlayerPosition=G&PtMeasureType=Drives&Season=2017-18&SeasonSegment=&SeasonType=Regular+Season&StarterBench=&TeamID=0&VsConference=&VsDivision=
 var driveStats = driveStatsJson.resultSets[0].rowSet;
-
 /*
+0   PLAYER_ID
+1   PLAYER_NAME
+2   TEAM_ID
+4   GP
+...
+7   MIN
 8	"DRIVES"
 9	"DRIVE_FGM"
 10	"DRIVE_FGA"
+11  "DRIVE_FG_PCT"
+12  "DRIVE_FTM"
+13  "DRIVE_FTA"
 ...
 */
 
@@ -103,10 +111,29 @@ var usageStats = usageStatsJson.resultSets[0].rowSet;
  */
 
 
+function removeId(id,i){
+    if(shoot8Stats[i][0] === id){
+        shoot8Stats.splice(i,1);
+    }
+    if(shoot5Stats[i][0] === id){
+        shoot5Stats.splice(i,1);
+    }
+    if(shootZoneStats[i][0] === id){
+        shootZoneStats.splice(i,1);
+    }
+}
 
-for(var i =0; i<shoot8Stats.length;i++) {
-    if (shoot8Stats[i][0] == driveStats[i][0] && shoot8Stats[i][0] == catchShootStats[i][0] && driveStats[i][7] != null
-        && driveStats[i][7]/driveStats[i][4] > 10) {
+
+for(var i =0; i<shoot5Stats.length;i++) {
+
+    //checks consistency of data
+    if (shoot8Stats[i][0] != driveStats[i][0] || shoot8Stats[i][0] != catchShootStats[i][0]
+        || shoot8Stats[i][0] != shoot5Stats[i][0] || shoot8Stats[i][0] != shootZoneStats[i][0]) {
+        removeId(shoot8Stats[i][0],i);
+    }
+    //console.log(shoot8Stats[i][0]+" "+ driveStats[i][0])
+    // filters min>10 & gp>10
+    if (driveStats[i][7] > 10 && driveStats[i][4] > 10 ) {
         //Get field goals from various areas at the rim, close range, mid range, and 3pters
         var name = shoot8Stats[i][1];
         var totalFga = shoot8Stats[i][6] + shoot8Stats[i][9] + shoot8Stats[i][12] + shoot8Stats[i][15]
@@ -123,9 +150,13 @@ for(var i =0; i<shoot8Stats.length;i++) {
         var totalMidrangeFga = totalFga - total3ptFga - totalCloseFga - totalRimFga;
         var totalMidrangeFgm = totalFgm - total3ptFgm - totalCloseFgm - totalRimFgm;
 
+        //total field goal attempts by type (C&S, drive, pullup, postup)
+        //adds half of fta to fga
+        var typeTotalFga = driveStats[i][10]+driveStats[i][13]/2 + catchShootStats[i][9]
+        var driveFga = ((driveStats[i][10]+driveStats[i][13]/2) / typeTotalFga * 100).toFixed(2)
+        var catchShootFga = (catchShootStats[i][9] / typeTotalFga * 100).toFixed(2)
 
-        var driveFga = (driveStats[i][10] / totalFga * 100).toFixed(2)
-        var catchShootFga = (catchShootStats[i][9] / totalFga * 100).toFixed(2)
+        //Start creating player object
         var player1 = new Player({
             _id: shoot8Stats[i][0],
             teamId: shoot8Stats[i][2],
@@ -140,19 +171,20 @@ for(var i =0; i<shoot8Stats.length;i++) {
             threeFga: (total3ptFga / totalFga * 100).toFixed(2),
             threeFgp: (total3ptFgm / total3ptFga * 100).toFixed(2),
             driveFga: driveFga,
-            catchshootFga: catchShootFga,
+            catchShootFga: catchShootFga,
             ast: usageStats[i][15],
             tov: usageStats[i][19],
             usg: (usageStats[i][22] * 100).toFixed(2)
 
         });
-        //console.log(player1);
-        /*
+        //console.log(name);
+
         player1.save(function (err) {
             if (err) {
-                console.log(name + " has an error");
+                console.log(name+" "+i+ " has an error");
             }
-        })*/
+        })
     }
 
 }
+

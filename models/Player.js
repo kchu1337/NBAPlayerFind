@@ -17,7 +17,7 @@ const playerSchema = new mongoose.Schema({
     threeFga: Number,
     threeFgp: Number,
     driveFga: Number,
-    catchshootFga: Number,
+    catchShootFga: Number,
     postFga: Number,
     pullupFga: Number,
     ast: Number,
