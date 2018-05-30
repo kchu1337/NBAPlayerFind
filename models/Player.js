@@ -22,7 +22,8 @@ const playerSchema = new mongoose.Schema({
     pullupFga: Number,
     ast: Number,
     tov: Number,
-    usg: Number
+    usg: Number,
+    catchShoot3pt: Number
     }, {safe:true});
 
 

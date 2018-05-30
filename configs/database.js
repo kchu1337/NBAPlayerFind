@@ -91,6 +91,7 @@ var catchShootStats = catchShootStatsJson.resultSets[0].rowSet;
 9	"CATCH_SHOOT_FGA"
 10	"CATCH_SHOOT_FG_PCT"
 ...
+13  "CATCH_SHOOT_FG3A"
  */
 
 
@@ -112,15 +113,11 @@ var usageStats = usageStatsJson.resultSets[0].rowSet;
 
 
 function removeId(id,i){
-    if(shoot8Stats[i][0] === id){
-        shoot8Stats.splice(i,1);
-    }
-    if(shoot5Stats[i][0] === id){
-        shoot5Stats.splice(i,1);
-    }
-    if(shootZoneStats[i][0] === id){
-        shootZoneStats.splice(i,1);
-    }
+    (shoot8Stats[i][0] === id)?shoot8Stats.splice(i,1):null;
+
+    (shoot5Stats[i][0] === id)? shoot5Stats.splice(i,1):null;
+
+    (shootZoneStats[i][0] === id)?shootZoneStats.splice(i,1):null;
 }
 
 
@@ -156,6 +153,9 @@ for(var i =0; i<shoot5Stats.length;i++) {
         var driveFga = ((driveStats[i][10]+driveStats[i][13]/2) / typeTotalFga * 100).toFixed(2)
         var catchShootFga = (catchShootStats[i][9] / typeTotalFga * 100).toFixed(2)
 
+        //Gets 3pt catch and shoot %
+        var catchShoot3pt = (catchShootStats[i][13] / typeTotalFga * 100).toFixed(2)
+
         //Start creating player object
         var player1 = new Player({
             _id: shoot8Stats[i][0],
@@ -174,10 +174,9 @@ for(var i =0; i<shoot5Stats.length;i++) {
             catchShootFga: catchShootFga,
             ast: usageStats[i][15],
             tov: usageStats[i][19],
-            usg: (usageStats[i][22] * 100).toFixed(2)
-
+            usg: (usageStats[i][22] * 100).toFixed(2),
+            catchShoot3pt: catchShoot3pt
         });
-        //console.log(name);
 
         player1.save(function (err) {
             if (err) {
