@@ -8,7 +8,6 @@ const bodyParser = require('body-parser');
 const logger = require('morgan');
 const chalk = require('chalk');
 const errorHandler = require('errorhandler');
-const lusca = require('lusca');
 const dotenv = require('dotenv');
 const MongoStore = require('connect-mongo')(session);
 const flash = require('express-flash');
@@ -17,17 +16,10 @@ const mongoose = require('mongoose');
 const expressValidator = require('express-validator');
 const expressStatusMonitor = require('express-status-monitor');
 const sass = require('node-sass-middleware');
-const multer = require('multer');
-
+const Player = require('./models/Player.js');
 
 
 dotenv.load({ path: '.env.example' });
-
-/**
- * Controllers (route handlers).
- */
-const homeController = require('./controllers/home');
-
 
 /**
  * Create Express server.
@@ -63,23 +55,21 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressValidator());
-/*app.use(session({
-  resave: true,
-  saveUninitialized: true,
-  //secret: process.env.SESSION_SECRET,
-  store: new MongoStore({
-    url: process.env.MONGODB_URI || process.env.MONGOLAB_URI,
-    autoReconnect: true,
-    clear_interval: 3600
-  })
-}));*/
+
+
+/**
+ * Controllers (route handlers).
+ */
+const homeController = require('./controllers/home');
+
 /**
  * Primary app routes.
  */
-
-
+//returns home page
 app.get('/', homeController.search);
+//returns top 5 matches
 app.get('/sample', homeController.sample);
+//loads search page
 app.get('/search', homeController.search);
 app.get('/details', homeController.details);
 //shows webpage of all players
@@ -89,13 +79,20 @@ app.get('/getall', homeController.getAllPlayers);
 app.get('/build', homeController.build);
 //returns percentile of fg%,ast,tov,usg
 app.get('/getPercentiles', homeController.getPercentiles);
+//redirects to initial clusterize page
+app.get('/clusterpage', homeController.clusterInitial)
+app.post('/clusterize', homeController.clusterize);
 
 app.use(errorHandler());
+
 /**
  * Initialize Database
  */
-
-require("./configs/database.js");
+Player.find({}).then(function (result) {
+    if (result == null || result.length < 1) {
+        require("./configs/database.js");
+    }
+});
 /*
 /**
  * Start Express server.

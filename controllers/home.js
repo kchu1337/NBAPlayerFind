@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const request = require('request');
+const kmeans = require("node-kmeans");
 const mongoose = require('mongoose')
 const Player = require('../models/Player');
 
@@ -23,6 +24,12 @@ exports.playerList = (req, res) => {
         });
 };
 
+exports.clusterInitial = (req, res) => {
+    res.render('cluster', {
+        title: 'Player Clustering'
+    });
+};
+
 exports.getAllPlayers = (req, res) => {
     Player.find({}, function(err, result){
         res.send(result);
@@ -31,7 +38,6 @@ exports.getAllPlayers = (req, res) => {
 
 exports.details = (req, res) => {
     Player.findOne({_id:req.query.id}, function(err, result){
-        console.log(result);
         var fullName = result.name.split(' ');
         var fname = fullName[0].trim();
         var lname = fullName[1].trim();
@@ -43,7 +49,6 @@ exports.details = (req, res) => {
 exports.getplayer = (req, res) => {
     //var playerId = require('mongodb').ObjectID(req.query.id);
     Player.findOne({_id:req.query.id}, function(err, result){
-        console.log(req.query.name);
         res.send(result);
     });
 };
@@ -52,7 +57,7 @@ exports.getplayer = (req, res) => {
 exports.getPercentiles = (req, res) => {
     Player.find({},
         {'rimFgp': true, 'closeFgp': true,'midrangeFgp': true, 'threeFgp': true, 'ast': true, 'tov': true, 'usg': true},
-        function(err, result) {
+        (err, result) => {
         var length = result.length;
         var rim = [];
         var close = [];
@@ -72,13 +77,27 @@ exports.getPercentiles = (req, res) => {
             console.log(result[i].tov);
         }
 
-        rim.sort(function(a,b) { return a - b; });
-        close.sort(function(a,b) { return a - b; });
-        midrange.sort(function(a,b) { return a - b;});
-        three.sort(function(a,b) { return a - b; });
-        assist.sort(function(a,b) { return a - b; });
-        turnover.sort(function(a,b) { return a - b; });
-        usage.sort(function(a,b) { return a - b; });
+            rim.sort((a, b) => {
+                return a - b;
+            });
+            close.sort((a, b) => {
+                return a - b;
+            });
+            midrange.sort((a, b) => {
+                return a - b;
+            });
+            three.sort((a, b) => {
+                return a - b;
+            });
+            assist.sort((a, b) => {
+                return a - b;
+            });
+            turnover.sort((a, b) => {
+                return a - b;
+            });
+            usage.sort((a, b) => {
+                return a - b;
+            });
 
         var percentile = Math.floor(length / 6);
         var allPercentiles = [];
@@ -101,7 +120,7 @@ exports.getPercentiles = (req, res) => {
 };
 
 exports.sample = (req, res) => {
-   Player.find({}, function(err, results){
+    Player.find({}, (err, results) => {//TODO replace with object destructuring
        //parse all query parameters into numbers.
        var rimFga = parseFloat(req.query.rimFga);
        var rimFgp = parseFloat(req.query.rimFgp);
@@ -121,7 +140,7 @@ exports.sample = (req, res) => {
        if (err){
            res.send(err);
        }
-      results.forEach(function(player){
+        results.forEach((player) => { //TODO replace with map
           //Calculates the sum of the differnce between given
           //parameters and player stats
           var difference=0;
@@ -156,6 +175,30 @@ exports.sample = (req, res) => {
 
 };
 
+exports.clusterize = (req, res) => {
+    const {param1, param2} = req.body;
+    var cluster = [];
+    cluster[0] = [];
+    cluster[1] = [];
+    cluster[2] = [];
+    Player.find({}, {name: 1, [param1]: 1, [param2]: 1}, (err, dbResult) => {
+        let vectors = [];
+        //Create vectors that only contain the parameters used for clustering
+        dbResult.forEach((player) => {
+            vectors.push([player[param1], player[param2]]);
+        })
+        kmeans.clusterize(vectors, {k: 3}, (err, clusterResult) => {
+            //clusterInd is the index of vectors who belong to that cluster
+            for (var i = 0; i < 3; i++) {
+                clusterResult[i].clusterInd.forEach((num) => {
+                    cluster[i].push({id: dbResult[num]._id, name: dbResult[num].name})
+                })
+            }
+        })
+    }).then(() => {
+        res.send(cluster);
+    });
+};
 
 exports.build = (req, res) => {
     /*var url = "http://stats.nba.com/stats/leaguedashplayershotlocations?DateFrom=&DateTo=&DistanceRange=8ft+Range&Division=&GameScope=&GameSegment=&Height=&LastNGames=0&LeagueID=00&Location=&MeasureType=Base&Month=0&OpponentTeamID=0&Outcome=&PORound=0&PaceAdjust=N&PerMode=PerGame&Period=0&PlayerExperience=&PlayerPosition=G&PlusMinus=N&Rank=N&Season=2017-18&SeasonSegment=&SeasonType=Regular+Season&StarterBench=&TeamID=0&VsConference=&VsDivision="
