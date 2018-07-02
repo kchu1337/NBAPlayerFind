@@ -74,7 +74,6 @@ exports.getPercentiles = (req, res) => {
             assist.push(Number(result[i].ast));
             turnover.push(Number(result[i].tov));
             usage.push(Number(result[i].usg));
-            console.log(result[i].tov);
         }
 
             rim.sort((a, b) => {
@@ -113,7 +112,6 @@ exports.getPercentiles = (req, res) => {
                 'usg' : usage[percentile*i]
             };
             allPercentiles.push(data);
-            console.log(percentile*i + " " + turnover[percentile*i])
         }
         res.send(allPercentiles);
     });
@@ -176,40 +174,32 @@ exports.sample = (req, res) => {
 };
 
 exports.clusterize = (req, res) => {
-    const {param1, param2} = req.body;
-    var cluster = [];
-    cluster[0] = [];
-    cluster[1] = [];
-    cluster[2] = [];
-    Player.find({}, {name: 1, [param1]: 1, [param2]: 1}, (err, dbResult) => {
+    const {param1, param2, param3} = req.body;
+    var clusters = [];
+    clusters[0] = [];
+    clusters[1] = [];
+    clusters[2] = [];
+    var centroids = [];
+    Player.find({}, {name: 1, teamId: 1, [param1]: 1, [param2]: 1, [param3]: 1}, (err, dbResult) => {
         let vectors = [];
         //Create vectors that only contain the parameters used for clustering
         dbResult.forEach((player) => {
-            vectors.push([player[param1], player[param2]]);
+          player[param1] = player[param1] || 0;
+          player[param2] = player[param2] || 0;
+          player[param3] = player[param3] || 0;
+            vectors.push([player[param1], player[param2], player[param3]]);
         })
         kmeans.clusterize(vectors, {k: 3}, (err, clusterResult) => {
             //clusterInd is the index of vectors who belong to that cluster
             for (var i = 0; i < 3; i++) {
                 clusterResult[i].clusterInd.forEach((num) => {
-                    cluster[i].push({id: dbResult[num]._id, name: dbResult[num].name})
+                    clusters[i].push({id: dbResult[num]._id, name: dbResult[num].name, teamId: dbResult[num].teamId} )
                 })
+              centroids.push(clusterResult[i].centroid);
             }
-        })
-    }).then(() => {
-        res.send(cluster);
+
+        }).then(() => {
+          res.send({clusters, centroids});
+    })
     });
-};
-
-exports.build = (req, res) => {
-    /*var url = "http://stats.nba.com/stats/leaguedashplayershotlocations?DateFrom=&DateTo=&DistanceRange=8ft+Range&Division=&GameScope=&GameSegment=&Height=&LastNGames=0&LeagueID=00&Location=&MeasureType=Base&Month=0&OpponentTeamID=0&Outcome=&PORound=0&PaceAdjust=N&PerMode=PerGame&Period=0&PlayerExperience=&PlayerPosition=G&PlusMinus=N&Rank=N&Season=2017-18&SeasonSegment=&SeasonType=Regular+Season&StarterBench=&TeamID=0&VsConference=&VsDivision="
-    request(url, function (error, response, body) {
-        console.log('error:', error); // Print the error if one occurred and handle it
-        console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-        var body2 = JSON.parse(body);
-        console.log('body', body);
-        res.send(body2);
-    });*/
-
-
-    res.send("");
 };

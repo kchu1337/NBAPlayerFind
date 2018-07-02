@@ -59,7 +59,11 @@
             </thead>
             <tbody>
             <tr ng-repeat = "player in playerCollection">
-                <td>{{player.name}}</td>
+                <td>
+                    <a ng-href="/details?id={{player._id}}">
+                        {{player.name}}
+                    </a>
+                </td>
                 <td>{{player.rimFga}}%</td>
                 <td>{{player.rimFgp}}%</td>
                 <td>{{player.closeFga}}%</td>
@@ -71,6 +75,9 @@
                 <td>{{player.ast}}%</td>
                 <td>{{player.tov}}%</td>
                 <td>{{player.usg}}%</td>
+                <td>{{player.driveFga}}%</td>
+                <td>{{player.catchShootFga}}%</td>
+
             </tr>
             </tbody>
 
@@ -87,8 +94,8 @@
 
 
         //Get JSON
-        query= "http://localhost:8080/getall";
-        $.ajax({url: query, crossDomain: true, dataType: 'json', type: 'GET'})
+        let url= "./getall";
+        $.ajax({url , crossDomain: true, dataType: 'json', type: 'GET'})
             .done(function (json) {
                 $scope.playerList = json;
                 console.log($scope.playerList);

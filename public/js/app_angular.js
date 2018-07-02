@@ -116,7 +116,6 @@ function mainController($scope, $http) {
             query+="&usg="+usg;
             query+="&drive="+drive;
             query+="&catchshoot="+catchShoot;
-            console.log(query);
 
             //Get JSON
             $.ajax({url: query, crossDomain: true, dataType: 'json', type: 'GET'})

@@ -4,13 +4,39 @@
     <meta charset="UTF-8"/>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular.min.js"></script>
     <script type="text/javascript" src='/js/cluster_angular.js'></script>
+    <script type="text/javascript" src='/js/checklist-model.js'></script>
 </head>
 <body data-ng-app="cluster">
 <div class="container">
     <div data-ng-controller="mainController">
+        <div ng-repeat="attribute in nbaAttributes">
+            <input type="checkbox" class= "max3checkbox" id="{{attribute}}" checklist-model="selectedList" checklist-value = "attribute" checklist-before-change = "max3(attribute)"/>
+            <label for="{{attribute}}">{{attribute}}</label>
+        </div>
         <button id="submitButton" class="btn btn-primary col-3" ng-click="submit()">Submit</button>
+        <br/>
+        <div class = "row">
+        <div ng-repeat="cluster in clusters">
+            <div class="col-sm-4">
+
+                {{selectedList[0]}}: {{centroids[$index][0] | number:4}}
+                {{selectedList[1]}}: {{centroids[$index][1] | number:4}}
+                {{selectedList[2]}}: {{centroids[$index][2] | number:4}}
+                ______________________
+                <div class="well">
+                    <div ng-repeat="player in cluster">
+                        <a ng-href="/details?id={{player.id}}">
+                            {{ player.name }}
+                        </a>
+                            ______________________
+                    </br>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
     </div>
 </div>
-
 </body>
 </html>

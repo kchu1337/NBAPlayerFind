@@ -76,7 +76,6 @@ app.get('/details', homeController.details);
 app.get('/playerlist', homeController.playerList);
 //returns json list of all players
 app.get('/getall', homeController.getAllPlayers);
-app.get('/build', homeController.build);
 //returns percentile of fg%,ast,tov,usg
 app.get('/getPercentiles', homeController.getPercentiles);
 //redirects to initial clusterize page
@@ -93,7 +92,7 @@ Player.find({}).then(function (result) {
         require("./configs/database.js");
     }
 });
-/*
+
 /**
  * Start Express server.
  */
