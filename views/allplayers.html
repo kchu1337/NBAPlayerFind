@@ -12,75 +12,76 @@
         .st-sort-descent:before{
             content: '\25BC';
         }
+        .st-selected {
+            background-color: lightskyblue !important;
+            color: #fefefe;
+        }
+        .lr-sticky-header {
+            color: white;
+            background: lightskyblue;
+            transition: all 0.6s;
+        }
+        #scrollPanel {
+            height: 100px;
+            overflow-y: auto;
+            width: 100px;
+        }
+        td { width: 180px; text-wrap: normal; word-wrap: break-word;}
+        table { width :180px; text-wrap: normal;
+            word-wrap: break-word;}
     </style>
 <body ng-app="myApp">
-<div class ="container">
+
     <div ng-controller="allPlayersController">
-        <table st-table="playerCollection" st-safe-src="playerList" class = "table table-bordered table-striped">
+        <table st-table="playerCollection" st-safe-src="playerList" class = "table table-bordered table-striped" st-sticky-header>
             <thead>
 
-            <th>
-                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="name">Name</button>
+            <th st-sort="name">
+                Name
             </th>
-            <th>
-                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="rimFga">{{definitions.rimFga}}</button>
+            <th data-toggle="tooltip" data-placement="top" title="{{definitions.rimFga}}" st-sort="rimFga">
+                Rim
             </th>
-            <th>
-                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="rimFgp">{{definitions.rimFgp}}</button>
+            <th data-toggle="tooltip" data-placement="top" title="{{definitions.closeFga}}" st-sort="closeFga">
+                Close
             </th>
-            <th>
-                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="closeFga">{{definitions.closeFga}}</button>
+            <th data-toggle="tooltip" data-placement="top" title="{{definitions.midrangeFga}}" st-sort="midrangeFga">
+                Midrange
             </th>
-            <th>
-                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="closeFgp">{{definitions.closeFgp}}</button>
+            <th data-toggle="tooltip" data-placement="top" title="{{definitions.threeFga}}" st-sort="threeFga">
+                Three
             </th>
-            <th>
-                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="midrangeFga">{{definitions.midrangeFga}}</button>
+            <th data-toggle="tooltip" data-placement="top" title="{{definitions.ast}}" st-sort="ast">
+                Assist
             </th>
-            <th>
-                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="midrangeFgp">{{definitions.midrangeFgp}}</button>
+            <th data-toggle="tooltip" data-placement="top" title="{{definitions.tov}}" st-sort="tov">
+                Turnover
             </th>
-            <th>
-                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="threeFga">{{definitions.threeFga}}</button>
+            <th data-toggle="tooltip" data-placement="top" title="{{definitions.usg}}" st-sort="usg">
+                Usage
             </th>
-            <th>
-                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="threeFgp">{{definitions.threeFgp}}</button>
+            <th data-toggle="tooltip" data-placement="top" title="{{definitions.driveFga}}" st-sort="driveFga">
+                Drive
             </th>
-            <th>
-                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="ast">{{definitions.ast}}</button>
+            <th data-toggle="tooltip" data-placement="top" title="{{definitions.catchShootFga}}" st-sort="catchShootFga">
+                Catch & Shoot
             </th>
-            <th>
-                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="tov">{{definitions.tov}}</button>
-            </th>
-            <th>
-                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="usg">{{definitions.usg}}</button>
-            </th>
-            <th>
-                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="driveFga">{{definitions.driveFga}}</button>
-            </th>
-            <th>
-                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="catchShootFga">{{definitions.catchShootFga}}</button>
-            </th>
-            <th>
-                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="pullupFga">{{definitions.pullupFga}}</button>
+            <th data-toggle="tooltip" data-placement="top" title="{{definitions.pullupFga}}" st-sort="pullupFga">
+                Pullup
             </th>
 
             </thead>
             <tbody>
-            <tr ng-repeat = "player in playerCollection">
-                <td>
+            <tr st-select-row="player" ng-repeat = "player in playerCollection">
+                <td width="120">
                     <a ng-href="/details?id={{player._id}}">
                         {{player.name}}
                     </a>
                 </td>
                 <td data-toggle="tooltip" data-placement="bottom" title="{{player.name}}; {{definitions.rimFga}}">{{player.rimFga}}%</td>
-                <td data-toggle="tooltip" data-placement="bottom" title="{{player.name}}; % of shots at the rim">{{player.rimFgp}}%</td>
-                <td data-toggle="tooltip" data-placement="bottom" title="{{player.name}}; Fg% 5-10 ft from the basket">{{player.closeFga}}%</td>
-                <td data-toggle="tooltip" data-placement="bottom" title="{{player.name}}; % of shots taken from 5-10 ft">{{player.closeFgp}}%</td>
-                <td data-toggle="tooltip" data-placement="bottom" title="{{player.name}}; Fg% at 11-24 ft from the basket">{{player.midrangeFga}}%</td>
-                <td data-toggle="tooltip" data-placement="bottom" title="{{player.name}}; % of shots taken from 11-24 ft">{{player.midrangeFgp}}%</td>
-                <td data-toggle="tooltip" data-placement="bottom" title="{{player.name}}; Fg% of 3 pointers">{{player.threeFga}}%</td>
-                <td data-toggle="tooltip" data-placement="bottom" title="{{player.name}}; % of shots taken from 3">{{player.threeFgp}}%</td>
+                <td data-toggle="tooltip" data-placement="bottom" title="{{player.name}}; % of shots taken from 5-10 ft">{{player.closeFga}}%</td>
+                <td data-toggle="tooltip" data-placement="bottom" title="{{player.name}}; % of shots taken from 11-24 ft">{{player.midrangeFga}}%</td>
+                <td data-toggle="tooltip" data-placement="bottom" title="{{player.name}}; % of shots taken from 3">{{player.threeFga}}%</td>
                 <td data-toggle="tooltip" data-placement="bottom" title="{{player.name}}; Assist %">{{player.ast}}%</td>
                 <td data-toggle="tooltip" data-placement="bottom" title="{{player.name}}; Turnover %">{{player.tov}}%</td>
                 <td data-toggle="tooltip" data-placement="bottom" title="{{player.name}}; Usage %">{{player.usg}}%</td>
@@ -89,11 +90,46 @@
                 <td data-toggle="tooltip" data-placement="bottom" title="{{player.name}}; % of shots that are pullup jump shots">{{player.pullupFga}}%</td>
 
             </tr>
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Rim
+                </th>
+                <th>
+                    Close
+                </th>
+                <th>
+                    Midrange
+                </th>
+                <th>
+                    Three
+                </th>
+                <th>
+                    ssist
+                </th>
+                <th>
+                    Turnover
+                </th>
+                <th>
+                    Usage
+                </th>
+                <th>
+                    Drive
+                </th>
+                <th>
+                    Catch & Shoot
+                </th>
+                <th>
+                    Pullup
+                </th>
+            </tr>
             </tbody>
 
         </table>
     </div>
-</div>
+
 </body>
 <script>
 
