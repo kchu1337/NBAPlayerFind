@@ -3,42 +3,53 @@ script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js')
 script(src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js', integrity='sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh', crossorigin='anonymous')
 script(src='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js', integrity='sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ', crossorigin='anonymous')
 include navbar.html
-div.container
-img(src='https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/'+player.teamId+'/2017/260x190/'+player.id+'.png',
-alt='image not found')
-table.table.table-bordered
+style
+    include detail.css
 
-    thead
-    tr
-        th Name
-        th Team
-        th FG Attempts% <8ft
-        th FG% <8ft
-        th FG Attempts% 8-16ft
-        th FG% 8-16ft
-        th FG Attempts% 16-24ft
-        th FG% 16-24ft
-        th FG Attempts% 24+ft
-        th FG% 24+ft
-        th Assist Rate
-        th Turnover Rate
-        th Usage Rate
-        th Drive Rate
-        th Catch and Shoot Rate
-    tbody
-    tr
-        td #{player.name}
-        td #{player.team}
-        td #{player.rimFga}%
-        td #{player.rimFgp}%
-        td #{player.closeFga}%
-        td #{player.closeFgp}%
-        td #{player.midrangeFga}%
-        td #{player.midrangeFgp}%
-        td #{player.threeFga}%
-        td #{player.threeFgp}%
-        td #{player.ast}%
-        td #{player.tov}%
-        td #{player.usg}%
-        td #{player.driveFga}%
-        td #{player.catchShootFga}%
+div.jumbotron
+    img(src='https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/'+player.teamId+'/2017/260x190/'+player.id+'.png',
+    alt='image not found')
+    table.table.table-bordered
+
+        thead
+        tr
+            th Name
+            th Team
+            th FG Attempts% <8ft
+            th FG% <8ft
+            th FG Attempts% 8-16ft
+            th FG% 8-16ft
+            th FG Attempts% 16-24ft
+            th FG% 16-24ft
+            th FG Attempts% 24+ft
+            th FG% 24+ft
+        tbody
+        tr
+            td #{player.name}
+            td #{player.team}
+            td #{player.rimFga}%
+            td #{player.rimFgp}%
+            td #{player.closeFga}%
+            td #{player.closeFgp}%
+            td #{player.midrangeFga}%
+            td #{player.midrangeFgp}%
+            td #{player.threeFga}%
+            td #{player.threeFgp}%
+
+    table.table.table-bordered
+        thead
+        tr
+            th Assist Rate
+            th Turnover Rate
+            th Usage Rate
+            th Drive Rate
+            th Catch and Shoot Rate
+            th Pullup Rate
+        tbody
+        tr
+            td #{player.ast}%
+            td #{player.tov}%
+            td #{player.usg}%
+            td #{player.driveFga}%
+            td #{player.catchShootFga}%
+            td #{player.pullupFga}%
