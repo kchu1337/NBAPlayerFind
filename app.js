@@ -81,6 +81,7 @@ app.get('/getPercentiles', homeController.getPercentiles);
 //redirects to initial clusterize page
 app.get('/clusterpage', homeController.clusterInitial)
 app.post('/clusterize', homeController.clusterize);
+app.get('/getdefinitions', homeController.getDefinitions)
 
 app.use(errorHandler());
 

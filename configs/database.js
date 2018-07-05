@@ -6,6 +6,8 @@ const shootZoneJson = require("../json/shootzone");
 const driveStatsJson = require("../json/drives");
 const catchShootStatsJson = require("../json/catchshoot");
 const usageStatsJson = require("../json/usage");
+const pullupJson = require("../json/pullup");
+
 
 var shoot5Stats = shoot5Json.resultSets.rowSet;
 /*
@@ -111,26 +113,52 @@ var usageStats = usageStatsJson.resultSets[0].rowSet;
 ...
  */
 
+var pullupStats = pullupJson.resultSets[0].rowSet;
+/*
+8	"PULL_UP_FGM"
+9	"PULL_UP_FGA"
+10	"PULL_UP_FG_PCT"
+11	"PULL_UP_FG3M"
+12	"PULL_UP_FG3A"
+...
+ */
 
+
+//removes misatched players
 function removeId(id,i){
+
+
+
     (shoot8Stats[i][0] === id)?shoot8Stats.splice(i,1):null;
 
     (shoot5Stats[i][0] === id)? shoot5Stats.splice(i,1):null;
 
     (shootZoneStats[i][0] === id)?shootZoneStats.splice(i,1):null;
+
+    (driveStats[i][0] === id)?driveStats.splice(i,1):null;
+
+    (pullupStats[i][0] === id)?pullupStats.splice(i,1):null;
+
+    (usageStats[i][0] === id)?usageStats.splice(i,1):null;
+
+    (catchShootStats[i][0] === id)?catchShootStats.splice(i,1):null;
+
 }
 
 
 for(var i =0; i<shoot5Stats.length;i++) {
-
     //checks consistency of data
+  console.log(shoot8Stats[i][0]+" "+ driveStats[i][0]+" "+ shootZoneStats[i][0]+" "+ pullupStats[i][0]+" "+ catchShootStats[i][0]+" "+ usageStats[i][0]);
     if (shoot8Stats[i][0] != driveStats[i][0] || shoot8Stats[i][0] != catchShootStats[i][0]
-        || shoot8Stats[i][0] != shoot5Stats[i][0] || shoot8Stats[i][0] != shootZoneStats[i][0]) {
+        || shoot8Stats[i][0] != shoot5Stats[i][0] || shoot8Stats[i][0] != shootZoneStats[i][0]
+        || shoot8Stats[i][0] != pullupStats[i][0] || shoot8Stats[i][0] != usageStats[i][0]) {
         removeId(shoot8Stats[i][0],i);
+        i--;
     }
-    //console.log(shoot8Stats[i][0]+" "+ driveStats[i][0])
-    // filters min>10 & gp>10
-    if (driveStats[i][7] > 10 && driveStats[i][4] > 10 ) {
+    else {
+
+      // filters min>10 & gp>10
+      if (driveStats[i][7] > 10 && driveStats[i][4] > 10) {
         //Get field goals from various areas at the rim, close range, mid range, and 3pters
         var name = shoot8Stats[i][1];
         var totalFga = shoot8Stats[i][6] + shoot8Stats[i][9] + shoot8Stats[i][12] + shoot8Stats[i][15]
@@ -142,48 +170,51 @@ for(var i =0; i<shoot5Stats.length;i++) {
         var totalRimFgm = shootZoneStats[i][5];
         //5-10 ft
         var totalCloseFga = shoot5Stats[i][6] + shoot5Stats[i][9] - totalRimFga;
-        var totalCloseFgm = shoot5Stats[i][5] + shoot5Stats[i][8] - totalRimFgm;;
+        var totalCloseFgm = shoot5Stats[i][5] + shoot5Stats[i][8] - totalRimFgm;
+        ;
         //11-24 ft
         var totalMidrangeFga = totalFga - total3ptFga - totalCloseFga - totalRimFga;
         var totalMidrangeFgm = totalFgm - total3ptFgm - totalCloseFgm - totalRimFgm;
 
         //total field goal attempts by type (C&S, drive, pullup, postup)
         //adds half of fta to fga
-        var typeTotalFga = driveStats[i][10]+driveStats[i][13]/2 + catchShootStats[i][9]
-        var driveFga = ((driveStats[i][10]+driveStats[i][13]/2) / typeTotalFga * 100).toFixed(2)
+        var typeTotalFga = driveStats[i][10] + driveStats[i][13] / 2 + catchShootStats[i][9] + pullupStats[i][9]
+        var driveFga = ((driveStats[i][10] + driveStats[i][13] / 2) / typeTotalFga * 100).toFixed(2)
         var catchShootFga = (catchShootStats[i][9] / typeTotalFga * 100).toFixed(2)
+        var pullupFga = (pullupStats[i][9] / typeTotalFga * 100).toFixed(2)
 
         //Gets 3pt catch and shoot %
         var catchShoot3pt = (catchShootStats[i][13] / typeTotalFga * 100).toFixed(2)
 
         //Start creating player object
         var player1 = new Player({
-            _id: shoot8Stats[i][0],
-            teamId: shoot8Stats[i][2],
-            name: shoot8Stats[i][1],
-            team: shoot8Stats[i][3],
-            rimFga: (totalRimFga / totalFga * 100).toFixed(2),
-            rimFgp: (totalRimFgm / totalRimFga * 100).toFixed(2),
-            closeFga: (totalCloseFga / totalFga * 100).toFixed(2),
-            closeFgp: (totalCloseFgm / totalCloseFga * 100).toFixed(2),
-            midrangeFga: (totalMidrangeFga / totalFga * 100).toFixed(2),
-            midrangeFgp: (totalMidrangeFgm / totalMidrangeFga * 100).toFixed(2),
-            threeFga: (total3ptFga / totalFga * 100).toFixed(2),
-            threeFgp: (total3ptFgm / total3ptFga * 100).toFixed(2),
-            driveFga: driveFga,
-            catchShootFga: catchShootFga,
-            ast: usageStats[i][15],
-            tov: usageStats[i][19],
-            usg: (usageStats[i][22] * 100).toFixed(2),
-            catchShoot3pt: catchShoot3pt
+          _id: shoot8Stats[i][0],
+          teamId: shoot8Stats[i][2],
+          name: shoot8Stats[i][1],
+          team: shoot8Stats[i][3],
+          rimFga: (totalRimFga / totalFga * 100).toFixed(2),
+          rimFgp: (totalRimFgm / totalRimFga * 100).toFixed(2),
+          closeFga: (totalCloseFga / totalFga * 100).toFixed(2),
+          closeFgp: (totalCloseFgm / totalCloseFga * 100).toFixed(2),
+          midrangeFga: (totalMidrangeFga / totalFga * 100).toFixed(2),
+          midrangeFgp: (totalMidrangeFgm / totalMidrangeFga * 100).toFixed(2),
+          threeFga: (total3ptFga / totalFga * 100).toFixed(2),
+          threeFgp: (total3ptFgm / total3ptFga * 100).toFixed(2),
+          driveFga,
+          catchShootFga,
+          pullupFga,
+          ast: usageStats[i][15],
+          tov: usageStats[i][19],
+          usg: (usageStats[i][22] * 100).toFixed(2),
+          catchShoot3pt
         });
 
         player1.save(function (err) {
-            if (err) {
-                console.log(name+" "+i+ " has an error");
-            }
+          if (err) {
+            console.log(name + " " + i + " has an error");
+          }
         })
+      }
     }
-
 }
 

@@ -44,7 +44,7 @@ describe("Testing", function(){
     });
 
     it('Gets a list of all Players directly from database', function(done){
-        Player.find().then(function(result){
+        Player.finpm nd().then(function(result){
             assert.isAbove(result.length,100,"Records Found");
             length = result.length;
             done();

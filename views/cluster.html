@@ -10,8 +10,8 @@
 <div class="container">
     <div data-ng-controller="mainController">
         <div ng-repeat="attribute in nbaAttributes">
-            <input type="checkbox" class= "max3checkbox" id="{{attribute}}" checklist-model="selectedList" checklist-value = "attribute" checklist-before-change = "max3(attribute)"/>
-            <label for="{{attribute}}">{{attribute}}</label>
+            <input type="checkbox" class= "max3checkbox" id="{{attribute.id}}" checklist-model="selectedList" checklist-value = "attribute.id" checklist-before-change = "max3(attribute.id)"/>
+            <label for="{{attribute.id}}">{{attribute.value}}</label>
         </div>
         <button id="submitButton" class="btn btn-primary col-3" ng-click="submit()">Submit</button>
         <br/>

@@ -23,37 +23,46 @@
                 <button class = "btn btn-link" style="height:100%;width:100%" st-sort="name">Name</button>
             </th>
             <th>
-                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="rimFga">FG Attempts% <8ft</button>
+                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="rimFga">{{definitions.rimFga}}</button>
             </th>
             <th>
-                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="rimFgp">FG% <8ft</button>
+                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="rimFgp">{{definitions.rimFgp}}</button>
             </th>
             <th>
-                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="closeFga">FG Attempts% 8-16ft</button>
+                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="closeFga">{{definitions.closeFga}}</button>
             </th>
             <th>
-                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="closeFgp">FG% 8-16ft</button>
+                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="closeFgp">{{definitions.closeFgp}}</button>
             </th>
             <th>
-                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="midrangeFga">FG Attempts% 16-24ft</button>
+                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="midrangeFga">{{definitions.midrangeFga}}</button>
             </th>
             <th>
-                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="midrangeFgp">FG% 16-24ft</button>
+                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="midrangeFgp">{{definitions.midrangeFgp}}</button>
             </th>
             <th>
-                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="threeFga">FG Attempts% 24+ft</button>
+                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="threeFga">{{definitions.threeFga}}</button>
             </th>
             <th>
-                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="threeFgp">FG% 24+ft</button>
+                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="threeFgp">{{definitions.threeFgp}}</button>
             </th>
             <th>
-                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="ast">Assist Rate</button>
+                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="ast">{{definitions.ast}}</button>
             </th>
             <th>
-                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="tov">Turnover Rate</button>
+                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="tov">{{definitions.tov}}</button>
             </th>
             <th>
-                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="usg">Usage Rate</button>
+                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="usg">{{definitions.usg}}</button>
+            </th>
+            <th>
+                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="driveFga">{{definitions.driveFga}}</button>
+            </th>
+            <th>
+                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="catchShootFga">{{definitions.catchShootFga}}</button>
+            </th>
+            <th>
+                <button class = "btn btn-link" style="height:100%;width:100%" st-sort="pullupFga">{{definitions.pullupFga}}</button>
             </th>
 
             </thead>
@@ -64,19 +73,20 @@
                         {{player.name}}
                     </a>
                 </td>
-                <td>{{player.rimFga}}%</td>
-                <td>{{player.rimFgp}}%</td>
-                <td>{{player.closeFga}}%</td>
-                <td>{{player.closeFgp}}%</td>
-                <td>{{player.midrangeFga}}%</td>
-                <td>{{player.midrangeFgp}}%</td>
-                <td>{{player.threeFga}}%</td>
-                <td>{{player.threeFgp}}%</td>
-                <td>{{player.ast}}%</td>
-                <td>{{player.tov}}%</td>
-                <td>{{player.usg}}%</td>
-                <td>{{player.driveFga}}%</td>
-                <td>{{player.catchShootFga}}%</td>
+                <td data-toggle="tooltip" data-placement="bottom" title="{{player.name}}; {{definitions.rimFga}}">{{player.rimFga}}%</td>
+                <td data-toggle="tooltip" data-placement="bottom" title="{{player.name}}; % of shots at the rim">{{player.rimFgp}}%</td>
+                <td data-toggle="tooltip" data-placement="bottom" title="{{player.name}}; Fg% 5-10 ft from the basket">{{player.closeFga}}%</td>
+                <td data-toggle="tooltip" data-placement="bottom" title="{{player.name}}; % of shots taken from 5-10 ft">{{player.closeFgp}}%</td>
+                <td data-toggle="tooltip" data-placement="bottom" title="{{player.name}}; Fg% at 11-24 ft from the basket">{{player.midrangeFga}}%</td>
+                <td data-toggle="tooltip" data-placement="bottom" title="{{player.name}}; % of shots taken from 11-24 ft">{{player.midrangeFgp}}%</td>
+                <td data-toggle="tooltip" data-placement="bottom" title="{{player.name}}; Fg% of 3 pointers">{{player.threeFga}}%</td>
+                <td data-toggle="tooltip" data-placement="bottom" title="{{player.name}}; % of shots taken from 3">{{player.threeFgp}}%</td>
+                <td data-toggle="tooltip" data-placement="bottom" title="{{player.name}}; Assist %">{{player.ast}}%</td>
+                <td data-toggle="tooltip" data-placement="bottom" title="{{player.name}}; Turnover %">{{player.tov}}%</td>
+                <td data-toggle="tooltip" data-placement="bottom" title="{{player.name}}; Usage %">{{player.usg}}%</td>
+                <td data-toggle="tooltip" data-placement="bottom" title="{{player.name}}; % of shots that are drives to the basket">{{player.driveFga}}%</td>
+                <td data-toggle="tooltip" data-placement="bottom" title="{{player.name}}; % of shots that are catch and shoot">{{player.catchShootFga}}%</td>
+                <td data-toggle="tooltip" data-placement="bottom" title="{{player.name}}; % of shots that are pullup jump shots">{{player.pullupFga}}%</td>
 
             </tr>
             </tbody>
@@ -87,10 +97,13 @@
 </body>
 <script>
 
+  $(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
+  });
+
     var app = angular.module("myApp",['smart-table']);
 
     app.controller("allPlayersController", function ($scope, $http) {
-
 
 
         //Get JSON
@@ -98,7 +111,16 @@
         $.ajax({url , crossDomain: true, dataType: 'json', type: 'GET'})
             .done(function (json) {
                 $scope.playerList = json;
-                console.log($scope.playerList);
+                $scope.$apply();
+            })
+            .fail(function () {
+                alert("Error");
+            });
+
+        url= "./getdefinitions";
+        $.ajax({url , crossDomain: true, dataType: 'json', type: 'GET'})
+            .done(function (json) {
+                $scope.definitions = json;
                 $scope.$apply();
             })
             .fail(function () {
@@ -106,5 +128,7 @@
             });
 
     });
+
+
 </script>
 </html>

@@ -72,60 +72,64 @@ function mainController($scope, $http) {
             ]}
         $scope.usageSelected = {label: "Very Low", value: 20};
     });
-
-
-
-
-        $scope.submit = function () {
-            //Get all parameters from DOM
-            var rimFga = document.getElementById("rimFga").value;
-            var rimFgp = $scope.rimSelected.value;
-            var closeFga = document.getElementById("closeFga").value;
-            var closeFgp = $scope.closeSelected.value;
-            var midrangeFga = document.getElementById("midrangeFga").value;
-            var midrangeFgp = $scope.midrangeSelected.value;
-            var threeFga = document.getElementById("threeFga").value;
-            var threeFgp = $scope.threeSelected.value;
-            var ast = $scope.assistSelected.value;
-            var tov = $scope.turnoverSelected.value;
-            var usg = $scope.usageSelected.value;
-            var drive = document.getElementById("driveFga").value;
-            var catchShoot = document.getElementById("CSFga").value;
-            //var pullup =
-
-
-            //Find percentages if sum != 100
-            var fgaTotal = Number(rimFga)+Number(closeFga)+Number(midrangeFga)+Number(threeFga);
-            rimFga = rimFga/fgaTotal*100;
-            closeFga = closeFga/fgaTotal*100;
-            midrangeFga = midrangeFga/fgaTotal*100;
-            threeFga = threeFga/fgaTotal*100;
-
-            //Create url
-            var query = "/sample?"
-            query+="rimFga="+rimFga;
-            query+="&rimFgp="+rimFgp;
-            query+="&closeFga="+closeFga;
-            query+="&closeFgp="+closeFgp;
-            query+="&midrangeFga="+midrangeFga;
-            query+="&midrangeFgp="+midrangeFgp;
-            query+="&threeFga="+threeFga;
-            query+="&threeFgp="+threeFgp;
-            query+="&ast="+ast;
-            query+="&tov="+tov;
-            query+="&usg="+usg;
-            query+="&drive="+drive;
-            query+="&catchshoot="+catchShoot;
-
-            //Get JSON
-            $.ajax({url: query, crossDomain: true, dataType: 'json', type: 'GET'})
-                .done(function (json) {
-                    $scope.players = json;
-                    $scope.$apply();
-                })
-                .fail(function () {
-                    alert("Error");
-                });
-        }
-
+    
+    $http.get("/getdefinitions")
+        .then(function (response) {
+        $scope.definitions = response;
+    });
+    
+    
+    $scope.submit = function () {
+        //Get all parameters from DOM
+        var rimFga = document.getElementById("rimFga").value;
+        var rimFgp = $scope.rimSelected.value;
+        var closeFga = document.getElementById("closeFga").value;
+        var closeFgp = $scope.closeSelected.value;
+        var midrangeFga = document.getElementById("midrangeFga").value;
+        var midrangeFgp = $scope.midrangeSelected.value;
+        var threeFga = document.getElementById("threeFga").value;
+        var threeFgp = $scope.threeSelected.value;
+        var ast = $scope.assistSelected.value;
+        var tov = $scope.turnoverSelected.value;
+        var usg = $scope.usageSelected.value;
+        var drive = document.getElementById("driveFga").value;
+        var catchShoot = document.getElementById("CSFga").value;
+        var pullup = document.getElementById("pullupFga").value;
+        
+        
+        //Find percentages if sum != 100
+        var fgaTotal = Number(rimFga) + Number(closeFga) + Number(midrangeFga) + Number(threeFga);
+        rimFga = rimFga / fgaTotal * 100;
+        closeFga = closeFga / fgaTotal * 100;
+        midrangeFga = midrangeFga / fgaTotal * 100;
+        threeFga = threeFga / fgaTotal * 100;
+        
+        //Create url
+        var query = "/sample?"
+        query += "rimFga=" + rimFga;
+        query += "&rimFgp=" + rimFgp;
+        query += "&closeFga=" + closeFga;
+        query += "&closeFgp=" + closeFgp;
+        query += "&midrangeFga=" + midrangeFga;
+        query += "&midrangeFgp=" + midrangeFgp;
+        query += "&threeFga=" + threeFga;
+        query += "&threeFgp=" + threeFgp;
+        query += "&ast=" + ast;
+        query += "&tov=" + tov;
+        query += "&usg=" + usg;
+        query += "&drive=" + drive;
+        query += "&catchshoot=" + catchShoot;
+        query += "&catchshoot=" + catchShoot;
+        query += "&pullup=" + pullup;
+        
+        //Get JSON
+        $.ajax({url: query, crossDomain: true, dataType: 'json', type: 'GET'})
+            .done(function (json) {
+                $scope.players = json;
+                $scope.$apply();
+            })
+            .fail(function () {
+                alert("Error");
+            });
+    }
 };
