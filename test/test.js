@@ -55,20 +55,21 @@ describe("Testing", function(){
             .get('/playerlist')
             .end(function (err, res) {
                 expect(res).to.have.status(200);
+                done();
             });
-        done();
+
     });
 
     it('Gets a specific player from URL', function(done) {
         chai.request(app)
-            .get('/details')
+            .get('/getplayer')
             .query(({id: playerId}))
-            .then(function (err, res) {
+            .end(function (err, res) {
                 expect(err).to.be.null;
                 expect(res).to.have.status(200);
-                expect(res.name).to.equal('Zach LaVine');
+                expect(res.body.name).to.equal('Zach LaVine');
+                done();
             });
-        done();
     });
 
     it('Gets list of closely matched players', function(done) {
@@ -89,11 +90,29 @@ describe("Testing", function(){
                 drive: 30,
                 catchshoot: 30
             })
-            .then(function (err, res) {
+            .end(function (err, res) {
                 expect(err).to.be.null;
                 expect(res).to.have.status(200);
-                expect(res.length.to.equal(5));
+                expect(res.body).to.have.lengthOf(5);
+                done();
             });
-        done();
+    });
+    
+    it('Gets clusters', function(done) {
+        chai.request(app)
+            .post('/clusterize')
+            .set('content-type', 'application/json')
+            .send({
+                'param1': 'rimFga',
+                'param2': 'rimFgp',
+                'param3': 'closeFga'
+            })
+            .end(function (err, res) {
+                expect(err).to.be.null;
+                expect(res).to.have.status(200);
+                expect(res.body.clusters).to.have.lengthOf(3);
+                expect(res.body.centroids).to.have.lengthOf(3);
+                done();
+            });
     });
 })
