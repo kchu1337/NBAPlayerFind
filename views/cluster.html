@@ -9,34 +9,63 @@
 <body data-ng-app="cluster">
 <div class="container">
     <div data-ng-controller="mainController">
+        <div class="container">
         <div ng-repeat="attribute in nbaAttributes">
             <input type="checkbox" class= "max3checkbox" id="{{attribute.id}}" checklist-model="selectedList" checklist-value = "attribute.id" checklist-before-change = "max3(attribute.id)"/>
             <label for="{{attribute.id}}">{{attribute.value}}</label>
         </div>
         <button id="submitButton" class="btn btn-primary col-3" ng-click="submit()">Submit</button>
+        </div>
         <br/>
-        <div class = "row">
-        <div ng-repeat="cluster in clusters">
-            <div class="col-sm-4">
-
-                {{selectedList[0]}}: {{centroids[$index][0] | number:4}}
-                {{selectedList[1]}}: {{centroids[$index][1] | number:4}}
-                {{selectedList[2]}}: {{centroids[$index][2] | number:4}}
-                ______________________
-                <div class="well">
-                    <div ng-repeat="player in cluster">
+        <br/>
+        <div id="results"  class="container">
+        <ul class="nav nav-tabs">
+            <li><a class="nav-link active" data-toggle="tab" href="#cluster1">Cluster 1</a></li>
+            <li><a class="nav-link" data-toggle="tab" href="#cluster2">Cluster 2</a></li>
+            <li><a class="nav-link" data-toggle="tab" href="#cluster3">Cluster 3</a></li>
+        </ul>
+            <div class="tab-content">
+                <div id="cluster1" class="tab-pane fade show active">
+                    <h2>{{selectedList[0]}}: {{centroids[0][0] | number:4}}</h2>
+                    <h2>{{selectedList[1]}}: {{centroids[0][1] | number:4}}</h2>
+                    <h2>{{selectedList[2]}}: {{centroids[0][2] | number:4}}</h2>
+                    <div ng-repeat="player in clusters[0]">
                         <a ng-href="/details?id={{player.id}}">
                             {{ player.name }}
                         </a>
-                            ______________________
-                    </br>
+                    </div>
+                </div>
+                <div id="cluster2" class="tab-pane fade">
+                    <h2>{{selectedList[0]}}: {{centroids[1][0] | number:4}}</h2>
+                    <h2>{{selectedList[1]}}: {{centroids[1][1] | number:4}}</h2>
+                    <h2>{{selectedList[2]}}: {{centroids[1][2] | number:4}}</h2>
+                    <div ng-repeat="player in clusters[1]">
+                        <a ng-href="/details?id={{player.id}}">
+                            {{ player.name }}
+                        </a>
+                    </div>
+                </div>
+                <div id="cluster3" class="tab-pane fade">
+                    <h2>{{selectedList[0]}}: {{centroids[2][0] | number:4}}</h2>
+                    <h2>{{selectedList[1]}}: {{centroids[2][1] | number:4}}</h2>
+                    <h2>{{selectedList[2]}}: {{centroids[2][2] | number:4}}</h2>
+                    <div ng-repeat="player in clusters[2]">
+                        <a ng-href="/details?id={{player.id}}">
+                            {{ player.name }}
                         </a>
                     </div>
                 </div>
             </div>
         </div>
-        </div>
     </div>
 </div>
 </body>
+<script>
+    $( document ).ready(function() {
+        document.getElementById("results").style.display = "none";
+    });
+    $("#submitButton").click(function () {
+        document.getElementById("results").style.display = "block";
+    });
+</script>
 </html>
