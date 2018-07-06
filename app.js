@@ -69,7 +69,9 @@ app.get('/', homeController.search);
 app.get('/sample', homeController.sample);
 //loads search page
 app.get('/search', homeController.search);
+//shows webpage of specific player
 app.get('/details', homeController.details);
+app.get('/getPlayer', homeController.getplayer);
 //shows webpage of all players
 app.get('/playerlist', homeController.playerList);
 //returns json list of all players
