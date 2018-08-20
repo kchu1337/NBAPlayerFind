@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 const request = require('request');
 const kmeans = require("node-kmeans");
-const mongoose = require('mongoose')
 const Player = require('../models/Player');
+const dynamo = require('../helpers/dynamo');
 const statsDefinitions = {
     rimFga: 'Field goal % at the rim',
     rimFgp: '% of shots taken at the rim',
@@ -48,42 +48,38 @@ exports.clusterInitial = (req, res) => {
 };
 
 exports.getAllPlayers = (req, res) => {
-    Player.find({}, function (err, result) {
-        res.send(result);
-    });
+    dynamo.scan().then((result) => res.send(result));
 };
 
 exports.details = (req, res) => {
-    Player.findOne({_id: req.query.id}, function (err, result) {
-        var fullName = result.name.split(' ');
-        var fname = fullName[0].trim();
-        var lname = fullName[1].trim();
-        res.render('detail', {
-            player: result, fname: fname, lname: lname
-        });
+  dynamo.get(req.query.id).then((response) =>{
+    const result = response;
+    var fullName = result.name.split(' ');
+    var fname = fullName[0].trim();
+    var lname = fullName[1].trim();
+    return res.render('detail', {
+      player: result, fname: fname, lname: lname
     });
-};
+  });
+}
 
 exports.getplayer = (req, res) => {
-    //var playerId = require('mongodb').ObjectID(req.query.id);
-    Player.findOne({_id: req.query.id}, function (err, result) {
-        res.send(result);
+  dynamo.get(req.query.id).then((result) =>{
+        return res.send(result);
     });
 };
 
 //returns 1/6th percentiles of
 exports.getPercentiles = (req, res) => {
-    Player.find({},
-        {
-            'rimFgp': true,
-            'closeFgp': true,
-            'midrangeFgp': true,
-            'threeFgp': true,
-            'ast': true,
-            'tov': true,
-            'usg': true
-        },
-        (err, result) => {
+  dynamo.scan({
+    proj1: 'rimFgp',
+    proj2: 'closeFgp',
+    proj3: 'midrangeFgp',
+    proj4: 'threeFgp',
+    proj5: 'ast',
+    proj6: 'tov',
+    proj7: 'usg'
+  }).then((result) => {
             var length = result.length;
             var rim = [];
             var close = [];
@@ -139,12 +135,12 @@ exports.getPercentiles = (req, res) => {
                 };
                 allPercentiles.push(data);
             }
-            res.send(allPercentiles);
+            return res.send(allPercentiles);
         });
 };
 
 exports.sample = (req, res) => {
-    Player.find({}, (err, results) => {//TODO replace with object destructuring
+  dynamo.scan().then((results) => {//TODO replace with object destructuring
         //parse all query parameters into numbers.
         var rimFga = parseFloat(req.query.rimFga);
         var rimFgp = parseFloat(req.query.rimFgp);
@@ -161,11 +157,8 @@ exports.sample = (req, res) => {
         var catchShoot = parseFloat(req.query.catchshoot);
         //"answer" will be the caculated list the api returns
         var answer = [];
-        if (err) {
-            res.send(err);
-        }
         results.forEach((player) => { //TODO replace with map
-            //Calculates the sum of the differnce between given
+            //Calculates the sum of the difference between given
             //parameters and player stats
             var difference = 0;
             difference += Math.abs(player.rimFga - rimFga);
@@ -185,7 +178,7 @@ exports.sample = (req, res) => {
             var fname = fullName[0].trim();
             var lname = fullName[1].trim();
             answer.push({
-                'name': player.name, 'id': player._id, 'teamId': player.teamId, 'fname': fname, 'lname': lname,
+                'name': player.name, 'id': player.id, 'teamId': player.teamId, 'fname': fname, 'lname': lname,
                 'diff': difference
             });
             
@@ -208,20 +201,27 @@ exports.clusterize = (req, res) => {
     clusters[1] = [];
     clusters[2] = [];
     var centroids = [];
-    Player.find({}, {name: 1, teamId: 1, [param1]: 1, [param2]: 1, [param3]: 1}, (err, dbResult) => {
+  dynamo.scan({
+    id: 'id',
+    '#name': '#name',
+    'teamId': 'teamId',
+    param1,
+    param2,
+    param3
+  }).then((dbResult) => {
         let vectors = [];
         //Create vectors that only contain the parameters used for clustering
         dbResult.forEach((player) => {
-            player[param1] = player[param1] || 0;
-            player[param2] = player[param2] || 0;
-            player[param3] = player[param3] || 0;
+            player[param1] = parseFloat(player[param1]) || 0;
+            player[param2] = parseFloat(player[param2]) || 0;
+            player[param3] = parseFloat(player[param3]) || 0;
             vectors.push([player[param1], player[param2], player[param3]]);
         })
         kmeans.clusterize(vectors, {k: 3}, (err, clusterResult) => {
             //clusterInd is the index of vectors who belong to that cluster
             for (var i = 0; i < 3; i++) {
                 clusterResult[i].clusterInd.forEach((num) => {
-                    clusters[i].push({id: dbResult[num]._id, name: dbResult[num].name, teamId: dbResult[num].teamId})
+                    clusters[i].push({id: dbResult[num].id, name: dbResult[num].name, teamId: dbResult[num].teamId})
                 })
                 centroids.push(clusterResult[i].centroid);
             }

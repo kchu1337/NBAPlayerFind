@@ -10,10 +10,10 @@
   "license": "MIT",
   "scripts": {
     "start": "node app.js",
-    "test": "mocha --exit",
-    "postinstall": "npm rebuild node-sass"
+    "test": "mocha --exit"
   },
   "dependencies": {
+    "aws-sdk": "^2.293.0",
     "bluebird": "^3.5.1",
     "body-parser": "^1.18.3",
     "chalk": "^2.4.1",

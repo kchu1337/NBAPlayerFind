@@ -6,26 +6,13 @@ const assert = chai.assert;
 const chaiHttp = require('chai-http');
 const expect = chai.expect;
 const app = require('../app.js');
+const dynamo = require('../helpers/dynamo');
 
 chai.use(chaiHttp);
 dotenv.load({ path: '.env.example' });
 var length;
-var playerId;
+const playerId = '203897';
 
-/**
- * Connect to MongoDB.
- */
-before(function(done) {
-    /*mongoose.Promise = global.Promise;
-    mongoose.connect(process.env.MONGODB_URI || process.env.MONGOLAB_URI);
-    mongoose.connection.on('error', (err) => {
-        console.error(err);
-        console.log('%s MongoDB connection error. Please make sure MongoDB is running.', chalk.red('✗'));
-        process.exit();
-    });*/
-    app;
-    done();
-});
 
 describe("Testing", function(){
 
@@ -35,45 +22,40 @@ describe("Testing", function(){
 
 
 
-    it('Finds a specific player from the database', function(done){
-       Player.findOne({name: 'Zach LaVine'}).then(function(result){
+    it('Finds a specific player from the database', function(){
+       return dynamo.get(playerId).then(function(result){
             assert.isNotNull(result, "Zach Lavine found");
-            playerId = result._id;
-            done();
         });
     });
 
-    it('Gets a list of all Players directly from database', function(done){
-        Player.find().then(function(result){
+    it('Gets a list of all Players directly from database', function(){
+        return dynamo.scan().then(function(result){
             assert.isAbove(result.length,100,"Records Found");
-            length = result.length;
-            done();
         });
     });
-    it('Gets list of all Players from URL', function(done) {
-        chai.request(app)
-            .get('/playerlist')
-            .end(function (err, res) {
+    it('Gets list of all Players from URL', function() {
+        return chai.request(app)
+            .get('/getAll')
+            .then((res) => {
                 expect(res).to.have.status(200);
-                done();
-            });
-
+            })
+        .catch((err) =>{
+          console.log(err);
+      });
     });
 
-    it('Gets a specific player from URL', function(done) {
-        chai.request(app)
+    it('Gets a specific player from URL', function() {
+       return chai.request(app)
             .get('/getplayer')
             .query(({id: playerId}))
-            .end(function (err, res) {
-                expect(err).to.be.null;
+            .then((res) => {
                 expect(res).to.have.status(200);
                 expect(res.body.name).to.equal('Zach LaVine');
-                done();
             });
     });
 
-    it('Gets list of closely matched players', function(done) {
-        chai.request(app)
+    it('Gets list of closely matched players', function() {
+        return chai.request(app)
             .get('/sample')
             .query({
                 rimFga: 30,
@@ -90,16 +72,14 @@ describe("Testing", function(){
                 drive: 30,
                 catchshoot: 30
             })
-            .end(function (err, res) {
-                expect(err).to.be.null;
+            .then((res) => {
                 expect(res).to.have.status(200);
                 expect(res.body).to.have.lengthOf(5);
-                done();
             });
     });
     
-    it('Gets clusters', function(done) {
-        chai.request(app)
+    it('Gets clusters', function() {
+        return chai.request(app)
             .post('/clusterize')
             .set('content-type', 'application/json')
             .send({
@@ -107,12 +87,10 @@ describe("Testing", function(){
                 'param2': 'rimFgp',
                 'param3': 'closeFga'
             })
-            .end(function (err, res) {
-                expect(err).to.be.null;
+            .then(function (res) {
                 expect(res).to.have.status(200);
                 expect(res.body.clusters).to.have.lengthOf(3);
                 expect(res.body.centroids).to.have.lengthOf(3);
-                done();
             });
     });
 })

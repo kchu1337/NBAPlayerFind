@@ -1,0 +1,73 @@
+'use strict'
+
+
+const config = require('../configs/db');
+const AWS = require("aws-sdk");
+const dynamo = module.exports;
+const Promise = require('bluebird');
+
+AWS.config.update({
+  accessKeyId: config.aws.accessKeyId,
+  region: config.aws.region,
+  secretAccessKey: config.aws.secretAccessKey,
+  endpoint: 'https://dynamodb.us-west-2.amazonaws.com'
+});
+const docClient = new AWS.DynamoDB.DocumentClient;
+const TableName = config.aws.dynamo.tables.name;
+
+dynamo.put = (player) => {
+  var params = {
+    TableName,
+    Item: player
+  }
+ return docClient.put(params).promise()
+    .then((res) => {
+      return res;
+    })
+    .catch((err) => {
+      console.log(err);
+      return err;
+    })
+}
+
+dynamo.get =(id) =>{
+  const params = {
+    TableName,
+    Key:{
+      id
+    }
+  };
+  return docClient.get(params).promise()
+    .then((res) => {
+      return res.Item;
+    })
+    .catch((err) => {
+      console.log(err);
+      return err;
+    })
+}
+
+
+dynamo.scan = (projection) => {
+  var params = {
+    TableName
+  };
+
+  if (projection){
+    params.ProjectionExpression = Object.keys(projection).map(function(k){return projection[k]}).join(",");
+    if (projection['#name']){
+      params.ExpressionAttributeNames = {
+        "#name" : "name"
+      }
+    }
+  }
+  return docClient.scan(params).promise()
+    .then((res) => {
+      return res.Items;
+    })
+    .catch((err) => {
+      console.log(err);
+      return err;
+    })
+}
+

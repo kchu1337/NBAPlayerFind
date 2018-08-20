@@ -7,6 +7,8 @@ const driveStatsJson = require("../json/drives");
 const catchShootStatsJson = require("../json/catchshoot");
 const usageStatsJson = require("../json/usage");
 const pullupJson = require("../json/pullup");
+const dynamo = require("../helpers/dynamo");
+
 
 
 var shoot5Stats = shoot5Json.resultSets.rowSet;
@@ -148,7 +150,7 @@ function removeId(id,i){
 
 for(var i =0; i<shoot5Stats.length;i++) {
     //checks consistency of data
-  console.log(shoot8Stats[i][0]+" "+ driveStats[i][0]+" "+ shootZoneStats[i][0]+" "+ pullupStats[i][0]+" "+ catchShootStats[i][0]+" "+ usageStats[i][0]);
+  //console.log(shoot8Stats[i][0]+" "+ driveStats[i][0]+" "+ shootZoneStats[i][0]+" "+ pullupStats[i][0]+" "+ catchShootStats[i][0]+" "+ usageStats[i][0]);
     if (shoot8Stats[i][0] != driveStats[i][0] || shoot8Stats[i][0] != catchShootStats[i][0]
         || shoot8Stats[i][0] != shoot5Stats[i][0] || shoot8Stats[i][0] != shootZoneStats[i][0]
         || shoot8Stats[i][0] != pullupStats[i][0] || shoot8Stats[i][0] != usageStats[i][0]) {
@@ -187,8 +189,8 @@ for(var i =0; i<shoot5Stats.length;i++) {
         var catchShoot3pt = (catchShootStats[i][13] / typeTotalFga * 100).toFixed(2)
 
         //Start creating player object
-        var player1 = new Player({
-          _id: shoot8Stats[i][0],
+        var player = {
+          id: shoot8Stats[i][0].toString(),
           teamId: shoot8Stats[i][2],
           name: shoot8Stats[i][1],
           team: shoot8Stats[i][3],
@@ -207,13 +209,10 @@ for(var i =0; i<shoot5Stats.length;i++) {
           tov: usageStats[i][19],
           usg: (usageStats[i][22] * 100).toFixed(2),
           catchShoot3pt
-        });
+        };
 
-        player1.save(function (err) {
-          if (err) {
-            console.log(name + " " + i + " has an error");
-          }
-        })
+        //dynamo.put(player).then((res) =>{
+        //})
       }
     }
 }

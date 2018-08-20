@@ -3,20 +3,18 @@
  */
 const express = require('express');
 const compression = require('compression');
-const session = require('express-session');
 const bodyParser = require('body-parser');
 const logger = require('morgan');
 const chalk = require('chalk');
 const errorHandler = require('errorhandler');
 const dotenv = require('dotenv');
 const path = require('path');
-const mongoose = require('mongoose');
 const expressValidator = require('express-validator');
 const expressStatusMonitor = require('express-status-monitor');
 const sass = require('node-sass-middleware');
 const Player = require('./models/Player.js');
 
-
+require("./configs/database.js");
 dotenv.load({ path: '.env.example' });
 
 /**
@@ -24,16 +22,6 @@ dotenv.load({ path: '.env.example' });
  */
 const app = express();
 
-/**
- * Connect to MongoDB.
- */
-mongoose.Promise = global.Promise;
-mongoose.connect(process.env.MONGODB_URI || process.env.MONGOLAB_URI);
-mongoose.connection.on('error', (err) => {
-  console.error(err);
-  console.log('%s MongoDB connection error. Please make sure MongoDB is running.', chalk.red('✗'));
-  process.exit();
-});
 
 /**
  * Express configuration.
