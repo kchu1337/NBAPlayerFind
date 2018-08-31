@@ -1,4 +1,4 @@
-var playerSearch = angular.module('playerSearch', []);
+const playerSearch = angular.module('playerSearch', []);
 
 function mainController($scope, $http) {
 
@@ -14,7 +14,7 @@ function mainController($scope, $http) {
                 {label: "Medium", value: $scope.percentileData[2].rimFgp},
                 {label: "High", value: $scope.percentileData[3].rimFgp},
                 {label: "Very High", value: $scope.percentileData[4].rimFgp}
-            ]}
+            ]};
         $scope.rimSelected = {label: "Very Low", value: 30};
 
 
@@ -24,7 +24,7 @@ function mainController($scope, $http) {
                 {label: "Medium", value: $scope.percentileData[2].closeFgp},
                 {label: "High", value: $scope.percentileData[3].closeFgp},
                 {label: "Very High", value: $scope.percentileData[4].closeFgp}
-            ]}
+            ]};
         $scope.closeSelected = {label: "Very Low", value: 20};
 
         $scope.midrange = {options:[
@@ -33,7 +33,7 @@ function mainController($scope, $http) {
                 {label: "Medium", value: $scope.percentileData[2].midrangeFgp},
                 {label: "High", value: $scope.percentileData[3].midrangeFgp},
                 {label: "Very High", value: $scope.percentileData[4].midrangeFgp}
-            ]}
+            ]};
         $scope.midrangeSelected = {label: "Very Low", value: 20};
 
         $scope.three = {options:[
@@ -42,7 +42,7 @@ function mainController($scope, $http) {
                 {label: "Medium", value: $scope.percentileData[2].threeFgp},
                 {label: "High", value: $scope.percentileData[3].threeFgp},
                 {label: "Very High", value: $scope.percentileData[4].threeFgp}
-            ]}
+            ]};
         $scope.threeSelected = {label: "Very Low", value: 20};
 
         $scope.assist = {options:[
@@ -51,7 +51,7 @@ function mainController($scope, $http) {
                 {label: "Medium", value: $scope.percentileData[2].ast},
                 {label: "High", value: $scope.percentileData[3].ast},
                 {label: "Very High", value: $scope.percentileData[4].ast}
-            ]}
+            ]};
         $scope.assistSelected = {label: "Very Low", value: 20};
 
         $scope.turnover = {options:[
@@ -60,7 +60,7 @@ function mainController($scope, $http) {
                 {label: "Medium", value: $scope.percentileData[2].tov},
                 {label: "High", value: $scope.percentileData[3].tov},
                 {label: "Very High", value: $scope.percentileData[4].tov}
-            ]}
+            ]};
         $scope.turnoverSelected = {label: "Very Low", value: 20};
 
         $scope.usage = {options:[
@@ -69,7 +69,7 @@ function mainController($scope, $http) {
                 {label: "Medium", value: $scope.percentileData[2].usg},
                 {label: "High", value: $scope.percentileData[3].usg},
                 {label: "Very High", value: $scope.percentileData[4].usg}
-            ]}
+            ]};
         $scope.usageSelected = {label: "Very Low", value: 20};
     });
     
@@ -92,9 +92,9 @@ function mainController($scope, $http) {
         var ast = $scope.assistSelected.value;
         var tov = $scope.turnoverSelected.value;
         var usg = $scope.usageSelected.value;
-        var drive = document.getElementById("driveFga").value;
-        var catchShoot = document.getElementById("CSFga").value;
-        var pullup = document.getElementById("pullupFga").value;
+        var driveFga = document.getElementById("driveFga").value;
+        var catchShootFga = document.getElementById("CSFga").value;
+        var pullupFga = document.getElementById("pullupFga").value;
         
         
         //Find percentages if sum != 100
@@ -103,33 +103,33 @@ function mainController($scope, $http) {
         closeFga = closeFga / fgaTotal * 100;
         midrangeFga = midrangeFga / fgaTotal * 100;
         threeFga = threeFga / fgaTotal * 100;
-        
-        //Create url
-        var query = "/sample?"
-        query += "rimFga=" + rimFga;
-        query += "&rimFgp=" + rimFgp;
-        query += "&closeFga=" + closeFga;
-        query += "&closeFgp=" + closeFgp;
-        query += "&midrangeFga=" + midrangeFga;
-        query += "&midrangeFgp=" + midrangeFgp;
-        query += "&threeFga=" + threeFga;
-        query += "&threeFgp=" + threeFgp;
-        query += "&ast=" + ast;
-        query += "&tov=" + tov;
-        query += "&usg=" + usg;
-        query += "&drive=" + drive;
-        query += "&catchshoot=" + catchShoot;
-        query += "&catchshoot=" + catchShoot;
-        query += "&pullup=" + pullup;
-        
+
+        //Create post body
+        var body = {
+          rimFga,
+          rimFgp,
+          closeFga,
+          closeFgp,
+          midrangeFga,
+          midrangeFgp,
+          threeFga,
+          threeFgp,
+          ast,
+          tov,
+          usg,
+          driveFga,
+          catchShootFga,
+          pullupFga
+        };
+
         //Get JSON
-        $.ajax({url: query, crossDomain: true, dataType: 'json', type: 'GET'})
-            .done(function (json) {
-                $scope.players = json;
+      $http.post("/search", body)
+            .then(function (response) {
+                $scope.players = response;
                 $scope.$apply();
             })
-            .fail(function () {
+            .catch(function () {
                 alert("Error");
             });
     }
-};
+}

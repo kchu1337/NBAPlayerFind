@@ -1,9 +1,7 @@
-const express = require('express');
-const router = express.Router();
-const request = require('request');
+
 const kmeans = require("node-kmeans");
-const Player = require('../models/Player');
 const dynamo = require('../helpers/dynamo');
+const _ = require('lodash');
 const statsDefinitions = {
     rimFga: 'Field goal % at the rim',
     rimFgp: '% of shots taken at the rim',
@@ -21,47 +19,11 @@ const statsDefinitions = {
     tov: 'Turnover %',
     usg: 'Usage %',
     catchShoot3pt: '% of shots that are catch and shoot 3s'
-}
-
-exports.index = (req, res) => {
-    res.render('home', {
-        title: 'Home'
-    });
-};
-
-exports.search = (req, res) => {
-    res.render('search', {
-        title: 'search'
-    });
-};
-
-exports.playerList = (req, res) => {
-    res.render('allplayers', {
-        title: 'Player List',
-    });
-};
-
-exports.clusterInitial = (req, res) => {
-    res.render('cluster', {
-        title: 'Player Clustering'
-    });
 };
 
 exports.getAllPlayers = (req, res) => {
     dynamo.scan().then((result) => res.send(result));
 };
-
-exports.details = (req, res) => {
-  dynamo.get(req.query.id).then((response) =>{
-    const result = response;
-    var fullName = result.name.split(' ');
-    var fname = fullName[0].trim();
-    var lname = fullName[1].trim();
-    return res.render('detail', {
-      player: result, fname: fname, lname: lname
-    });
-  });
-}
 
 exports.getplayer = (req, res) => {
   dynamo.get(req.query.id).then((result) =>{
@@ -80,15 +42,15 @@ exports.getPercentiles = (req, res) => {
     proj6: 'tov',
     proj7: 'usg'
   }).then((result) => {
-            var length = result.length;
-            var rim = [];
-            var close = [];
-            var midrange = [];
-            var three = [];
-            var assist = [];
-            var turnover = [];
-            var usage = [];
-            for (var i = 0; i < length; i++) {
+            const length = result.length;
+            const rim = [];
+            const close = [];
+            const midrange = [];
+            const three = [];
+            const assist = [];
+            const turnover = [];
+            const usage = [];
+            for (let i = 0; i < length; i++) {
                 rim.push(Number(result[i].rimFgp));
                 close.push(Number(result[i].closeFgp));
                 midrange.push(Number(result[i].midrangeFgp));
@@ -120,11 +82,11 @@ exports.getPercentiles = (req, res) => {
                 return a - b;
             });
             
-            var percentile = Math.floor(length / 6);
-            var allPercentiles = [];
+            const percentile = Math.floor(length / 6);
+            const allPercentiles = [];
             
-            for (var i = 1; i < 6; i++) {
-                var data = {
+            for (let i = 1; i < 6; i++) {
+                let data = {
                     'rimFgp': rim[percentile * i],
                     'closeFgp': close[percentile * i],
                     'midrangeFgp': midrange[percentile * i],
@@ -139,69 +101,49 @@ exports.getPercentiles = (req, res) => {
         });
 };
 
-exports.sample = (req, res) => {
-  dynamo.scan().then((results) => {//TODO replace with object destructuring
-        //parse all query parameters into numbers.
-        var rimFga = parseFloat(req.query.rimFga);
-        var rimFgp = parseFloat(req.query.rimFgp);
-        var closeFga = parseFloat(req.query.closeFga);
-        var closeFgp = parseFloat(req.query.closeFgp);
-        var midrangeFga = parseFloat(req.query.midrangeFga);
-        var midrangeFgp = parseFloat(req.query.midrangeFgp);
-        var threeFga = parseFloat(req.query.threeFga);
-        var threeFgp = parseFloat(req.query.threeFgp);
-        var ast = parseFloat(req.query.ast);
-        var tov = parseFloat(req.query.tov);
-        var usg = parseFloat(req.query.usg);
-        var drive = parseFloat(req.query.drive);
-        var catchShoot = parseFloat(req.query.catchshoot);
-        //"answer" will be the caculated list the api returns
-        var answer = [];
-        results.forEach((player) => { //TODO replace with map
-            //Calculates the sum of the difference between given
-            //parameters and player stats
-            var difference = 0;
-            difference += Math.abs(player.rimFga - rimFga);
-            difference += Math.abs(player.rimFgp - rimFgp);
-            difference += Math.abs(player.closeFga - closeFga);
-            difference += Math.abs(player.closeFgp - closeFgp) / 2;
-            difference += Math.abs(player.midrangeFga - midrangeFga);
-            difference += Math.abs(player.midrangeFgp - midrangeFgp) / 2;
-            difference += Math.abs(player.threeFga - threeFga);
-            difference += Math.abs(player.threeFgp - threeFgp) / 2;
-            difference += Math.abs(player.ast - ast) / 2;
-            difference += Math.abs(player.tov - tov) / 2;
-            difference += Math.abs(player.usg - usg) / 2;
-            difference += Math.abs(player.driveFga - drive);
-            difference += Math.abs(player.catchShootFga - catchShoot);
-            var fullName = player.name.split(' ');
-            var fname = fullName[0].trim();
-            var lname = fullName[1].trim();
-            answer.push({
-                'name': player.name, 'id': player.id, 'teamId': player.teamId, 'fname': fname, 'lname': lname,
-                'diff': difference
-            });
-            
-        })
-        //sorts the list by difference greatest->least
-        answer.sort(function (a, b) {
+exports.getSearchResults = (req, res) => {
+
+  //Only calculates stats are numbers
+  const statsToCalculate = _.pickBy(req.body, _.toNumber);
+  return dynamo.scan().then((results) => {
+      //Map-Reduces all players into the difference in stats between the user's
+      //given data and the players actual stats
+      let arrayOfPlayers = _.map(results, (playerStats) => {
+        let diff =  _.reduce(statsToCalculate, (sum, userStat, key) =>{
+          return sum + (Math.abs(_.toNumber(userStat)-playerStats[key]));
+        }, 0);
+
+        const { name, id, teamId} = playerStats;
+        const fullName = name.split(' ');
+        const fname = fullName[0].trim();
+        const lname = fullName[1].trim();
+        return {
+          name, id, teamId, fname, lname,
+          diff
+        };
+      });
+      //sorts the list by difference greatest->least
+        arrayOfPlayers.sort(function (a, b) {
             return a.diff - b.diff;
         });
         //returns the top 5 values
-        answer = answer.slice(0, 5);
-        res.send(answer);
+        arrayOfPlayers = arrayOfPlayers.slice(0, 5);
+        return res.send(arrayOfPlayers);
+    })
+    .catch((err) => {
+      console.log(err);
     });
-    
+
 };
 
 exports.clusterize = (req, res) => {
     const {param1, param2, param3} = req.body;
-    var clusters = [];
+    const clusters = [];
     clusters[0] = [];
     clusters[1] = [];
     clusters[2] = [];
-    var centroids = [];
-  dynamo.scan({
+    const centroids = [];
+  return dynamo.scan({
     id: 'id',
     '#name': '#name',
     'teamId': 'teamId',
@@ -216,16 +158,16 @@ exports.clusterize = (req, res) => {
             player[param2] = parseFloat(player[param2]) || 0;
             player[param3] = parseFloat(player[param3]) || 0;
             vectors.push([player[param1], player[param2], player[param3]]);
-        })
+        });
         kmeans.clusterize(vectors, {k: 3}, (err, clusterResult) => {
             //clusterInd is the index of vectors who belong to that cluster
-            for (var i = 0; i < 3; i++) {
+            for (let i = 0; i < 3; i++) {
                 clusterResult[i].clusterInd.forEach((num) => {
                     clusters[i].push({id: dbResult[num].id, name: dbResult[num].name, teamId: dbResult[num].teamId})
-                })
+                });
                 centroids.push(clusterResult[i].centroid);
             }
-                res.send({clusters, centroids});
+                return res.send({clusters, centroids});
         })
       
     });
