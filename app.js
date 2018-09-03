@@ -3,20 +3,17 @@
  */
 const express = require('express');
 const compression = require('compression');
-const session = require('express-session');
 const bodyParser = require('body-parser');
 const logger = require('morgan');
 const chalk = require('chalk');
 const errorHandler = require('errorhandler');
 const dotenv = require('dotenv');
 const path = require('path');
-const mongoose = require('mongoose');
 const expressValidator = require('express-validator');
 const expressStatusMonitor = require('express-status-monitor');
 const sass = require('node-sass-middleware');
-const Player = require('./models/Player.js');
 
-
+require("./configs/database.js");
 dotenv.load({ path: '.env.example' });
 
 /**
@@ -24,16 +21,6 @@ dotenv.load({ path: '.env.example' });
  */
 const app = express();
 
-/**
- * Connect to MongoDB.
- */
-mongoose.Promise = global.Promise;
-mongoose.connect(process.env.MONGODB_URI || process.env.MONGOLAB_URI);
-mongoose.connection.on('error', (err) => {
-  console.error(err);
-  console.log('%s MongoDB connection error. Please make sure MongoDB is running.', chalk.red('✗'));
-  process.exit();
-});
 
 /**
  * Express configuration.
@@ -59,40 +46,41 @@ app.use(expressValidator());
  * Controllers (route handlers).
  */
 const homeController = require('./controllers/home');
+const routeController = require('./controllers/route');
 
 /**
  * Primary app routes.
  */
 //returns home page
-app.get('/', homeController.search);
-//returns top 5 matches
-app.get('/sample', homeController.sample);
+app.get('/', routeController.search);
 //loads search page
-app.get('/search', homeController.search);
-//shows webpage of specific player
-app.get('/details', homeController.details);
-app.get('/getPlayer', homeController.getplayer);
+app.get('/search', routeController.search);
 //shows webpage of all players
-app.get('/playerlist', homeController.playerList);
+app.get('/playerlist', routeController.playerList);
+//shows webpage of specific player
+app.get('/singePlayerStats', routeController.details);
+//redirects to initial clusterize page
+app.get('/cluster', routeController.clusterInitial);
+app.get('/getPlayer', homeController.getplayer);
+//returns top 5 matches
+app.post('/search', homeController.getSearchResults);
 //returns json list of all players
 app.get('/getall', homeController.getAllPlayers);
 //returns percentile of fg%,ast,tov,usg
 app.get('/getPercentiles', homeController.getPercentiles);
-//redirects to initial clusterize page
-app.get('/clusterpage', homeController.clusterInitial)
-app.post('/clusterize', homeController.clusterize);
-app.get('/getdefinitions', homeController.getDefinitions)
+app.post('/cluster', homeController.clusterize);
+app.get('/getdefinitions', homeController.getDefinitions);
 
 app.use(errorHandler());
 
 /**
  * Initialize Database
  */
-Player.find({}).then(function (result) {
+/*Player.find({}).then(function (result) {
     if (result == null || result.length < 1) {
         require("./configs/database.js");
     }
-});
+});*/
 
 /**
  * Start Express server.

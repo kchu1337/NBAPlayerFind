@@ -1,5 +1,3 @@
-const mongoose = require('mongoose')
-const Player = require('../models/Player');
 const shoot5Json = require("../json/shoot5");
 const shoot8Json = require("../json/shoot8");
 const shootZoneJson = require("../json/shootzone");
@@ -7,9 +5,11 @@ const driveStatsJson = require("../json/drives");
 const catchShootStatsJson = require("../json/catchshoot");
 const usageStatsJson = require("../json/usage");
 const pullupJson = require("../json/pullup");
+const dynamo = require("../helpers/dynamo");
 
 
-var shoot5Stats = shoot5Json.resultSets.rowSet;
+
+const shoot5Stats = shoot5Json.resultSets.rowSet;
 /*
 ...
 <5ft
@@ -23,7 +23,7 @@ var shoot5Stats = shoot5Json.resultSets.rowSet;
 */
 
 //http://stats.nba.com/stats/leaguedashplayershotlocations?DateFrom=&DateTo=&DistanceRange=8ft+Range&Division=&GameScope=&GameSegment=&Height=&LastNGames=0&LeagueID=00&Location=&MeasureType=Base&Month=0&OpponentTeamID=0&Outcome=&PORound=0&PaceAdjust=N&PerMode=PerGame&Period=0&PlayerExperience=&PlayerPosition=G&PlusMinus=N&Rank=N&Season=2017-18&SeasonSegment=&SeasonType=Regular+Season&StarterBench=&TeamID=0&VsConference=&VsDivision=
-var shoot8Stats = shoot8Json.resultSets.rowSet;
+const shoot8Stats = shoot8Json.resultSets.rowSet;
 /*
 0	"PLAYER_ID"
 1	"PLAYER_NAME"
@@ -53,8 +53,7 @@ backcourt
 */
 
 
-var shootZoneStats = shootZoneJson.resultSets.rowSet;
-//var Player = mongoose.model('Player', playerSchema);
+const shootZoneStats = shootZoneJson.resultSets.rowSet;
 /*
 ...
 in restricted zone
@@ -66,7 +65,7 @@ in restricted zone
 
 
 //http://stats.nba.com/stats/leaguedashptstats?DateFrom=&DateTo=&Division=&GameScope=&LastNGames=0&LeagueID=00&Location=&Month=0&OpponentTeamID=0&Outcome=&PORound=0&PerMode=PerGame&PlayerExperience=&PlayerOrTeam=Player&PlayerPosition=G&PtMeasureType=Drives&Season=2017-18&SeasonSegment=&SeasonType=Regular+Season&StarterBench=&TeamID=0&VsConference=&VsDivision=
-var driveStats = driveStatsJson.resultSets[0].rowSet;
+const driveStats = driveStatsJson.resultSets[0].rowSet;
 /*
 0   PLAYER_ID
 1   PLAYER_NAME
@@ -86,7 +85,7 @@ var driveStats = driveStatsJson.resultSets[0].rowSet;
 
 
 //http://stats.nba.com/stats/leaguedashptstats?DateFrom=&DateTo=&Division=&GameScope=&LastNGames=0&LeagueID=00&Location=&Month=0&OpponentTeamID=0&Outcome=&PORound=0&PerMode=PerGame&PlayerExperience=&PlayerOrTeam=Player&PlayerPosition=G&PtMeasureType=CatchandShoot&Season=2017-18&SeasonSegment=&SeasonType=Regular+Season&StarterBench=&TeamID=0&VsConference=&VsDivision=
-var catchShootStats = catchShootStatsJson.resultSets[0].rowSet;
+const catchShootStats = catchShootStatsJson.resultSets[0].rowSet;
 /*
 ...
 8	"CATCH_SHOOT_FGM"
@@ -100,7 +99,7 @@ var catchShootStats = catchShootStatsJson.resultSets[0].rowSet;
 
 
 //http://stats.nba.com/stats/leaguedashplayerstats?&DateFrom=&DateTo=&Division=&GameScope=&GameSegment=&LastNGames=0&LeagueID=00&Location=&MeasureType=Usage&Month=0&OpponentTeamID=0&Outcome=&PORound=0&PaceAdjust=N&PerMode=PerGame&Period=0&PlayerExperience=&PlayerPosition=G&PlusMinus=N&Rank=N&Season=2017-18&SeasonSegment=&SeasonType=Regular+Season&ShotClockRange=&StarterBench=&TeamID=0&VsConference=&VsDivision=
-var usageStats = usageStatsJson.resultSets[0].rowSet;
+const usageStats = usageStatsJson.resultSets[0].rowSet;
 /*
 ...
 13	"AST_PCT"
@@ -113,7 +112,7 @@ var usageStats = usageStatsJson.resultSets[0].rowSet;
 ...
  */
 
-var pullupStats = pullupJson.resultSets[0].rowSet;
+const pullupStats = pullupJson.resultSets[0].rowSet;
 /*
 8	"PULL_UP_FGM"
 9	"PULL_UP_FGA"
@@ -146,49 +145,48 @@ function removeId(id,i){
 }
 
 
-for(var i =0; i<shoot5Stats.length;i++) {
+for(let i =0; i<shoot5Stats.length; i++) {
     //checks consistency of data
-  console.log(shoot8Stats[i][0]+" "+ driveStats[i][0]+" "+ shootZoneStats[i][0]+" "+ pullupStats[i][0]+" "+ catchShootStats[i][0]+" "+ usageStats[i][0]);
-    if (shoot8Stats[i][0] != driveStats[i][0] || shoot8Stats[i][0] != catchShootStats[i][0]
-        || shoot8Stats[i][0] != shoot5Stats[i][0] || shoot8Stats[i][0] != shootZoneStats[i][0]
-        || shoot8Stats[i][0] != pullupStats[i][0] || shoot8Stats[i][0] != usageStats[i][0]) {
+  //console.log(shoot8Stats[i][0]+" "+ driveStats[i][0]+" "+ shootZoneStats[i][0]+" "+ pullupStats[i][0]+" "+ catchShootStats[i][0]+" "+ usageStats[i][0]);
+    if (shoot8Stats[i][0] !== driveStats[i][0] || shoot8Stats[i][0] !== catchShootStats[i][0]
+        || shoot8Stats[i][0] !== shoot5Stats[i][0] || shoot8Stats[i][0] !== shootZoneStats[i][0]
+        || shoot8Stats[i][0] !== pullupStats[i][0] || shoot8Stats[i][0] !== usageStats[i][0]) {
         removeId(shoot8Stats[i][0],i);
         i--;
     }
     else {
 
-      // filters min>10 & gp>10
-      if (driveStats[i][7] > 10 && driveStats[i][4] > 10) {
+      // filters min>15 & gp>10
+      if (driveStats[i][7] > 15 && driveStats[i][4] > 10) {
         //Get field goals from various areas at the rim, close range, mid range, and 3pters
-        var name = shoot8Stats[i][1];
-        var totalFga = shoot8Stats[i][6] + shoot8Stats[i][9] + shoot8Stats[i][12] + shoot8Stats[i][15]
-        var totalFgm = shoot8Stats[i][5] + shoot8Stats[i][8] + shoot8Stats[i][11] + shoot8Stats[i][14]
-        var total3ptFga = shoot8Stats[i][15];
-        var total3ptFgm = shoot8Stats[i][14];
+        const totalFga = shoot8Stats[i][6] + shoot8Stats[i][9] + shoot8Stats[i][12] + shoot8Stats[i][15];
+        const totalFgm = shoot8Stats[i][5] + shoot8Stats[i][8] + shoot8Stats[i][11] + shoot8Stats[i][14];
+        const total3ptFga = shoot8Stats[i][15];
+        const total3ptFgm = shoot8Stats[i][14];
         //within circle
-        var totalRimFga = shootZoneStats[i][6];
-        var totalRimFgm = shootZoneStats[i][5];
+        const totalRimFga = shootZoneStats[i][6];
+        const totalRimFgm = shootZoneStats[i][5];
         //5-10 ft
-        var totalCloseFga = shoot5Stats[i][6] + shoot5Stats[i][9] - totalRimFga;
-        var totalCloseFgm = shoot5Stats[i][5] + shoot5Stats[i][8] - totalRimFgm;
-        ;
+        const totalCloseFga = shoot5Stats[i][6] + shoot5Stats[i][9] - totalRimFga;
+        const totalCloseFgm = shoot5Stats[i][5] + shoot5Stats[i][8] - totalRimFgm;
+
         //11-24 ft
-        var totalMidrangeFga = totalFga - total3ptFga - totalCloseFga - totalRimFga;
-        var totalMidrangeFgm = totalFgm - total3ptFgm - totalCloseFgm - totalRimFgm;
+        const totalMidrangeFga = totalFga - total3ptFga - totalCloseFga - totalRimFga;
+        const totalMidrangeFgm = totalFgm - total3ptFgm - totalCloseFgm - totalRimFgm;
 
         //total field goal attempts by type (C&S, drive, pullup, postup)
         //adds half of fta to fga
-        var typeTotalFga = driveStats[i][10] + driveStats[i][13] / 2 + catchShootStats[i][9] + pullupStats[i][9]
-        var driveFga = ((driveStats[i][10] + driveStats[i][13] / 2) / typeTotalFga * 100).toFixed(2)
-        var catchShootFga = (catchShootStats[i][9] / typeTotalFga * 100).toFixed(2)
-        var pullupFga = (pullupStats[i][9] / typeTotalFga * 100).toFixed(2)
+        const typeTotalFga = driveStats[i][10] + driveStats[i][13] / 2 + catchShootStats[i][9] + pullupStats[i][9];
+        const driveFga = ((driveStats[i][10] + driveStats[i][13] / 2) / typeTotalFga * 100).toFixed(2);
+        const catchShootFga = (catchShootStats[i][9] / typeTotalFga * 100).toFixed(2);
+        const pullupFga = (pullupStats[i][9] / typeTotalFga * 100).toFixed(2);
 
         //Gets 3pt catch and shoot %
-        var catchShoot3pt = (catchShootStats[i][13] / typeTotalFga * 100).toFixed(2)
+        const catchShoot3pt = (catchShootStats[i][13] / typeTotalFga * 100).toFixed(2);
 
         //Start creating player object
-        var player1 = new Player({
-          _id: shoot8Stats[i][0],
+        const player = {
+          id: shoot8Stats[i][0].toString(),
           teamId: shoot8Stats[i][2],
           name: shoot8Stats[i][1],
           team: shoot8Stats[i][3],
@@ -207,12 +205,9 @@ for(var i =0; i<shoot5Stats.length;i++) {
           tov: usageStats[i][19],
           usg: (usageStats[i][22] * 100).toFixed(2),
           catchShoot3pt
-        });
+        };
 
-        player1.save(function (err) {
-          if (err) {
-            console.log(name + " " + i + " has an error");
-          }
+        dynamo.put(player).then((res) =>{
         })
       }
     }
