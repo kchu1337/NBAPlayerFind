@@ -26,7 +26,7 @@ function mainController($scope, $http) {
         });
     $scope.selectedList = [];
     $scope.submit = function submit() {
-        $http.post("/clusterize", {
+        $http.post("/cluster", {
             param1: $scope.selectedList[0],
             param2: $scope.selectedList[1],
             param3: $scope.selectedList[2]
@@ -34,7 +34,7 @@ function mainController($scope, $http) {
             $scope.centroids = response.data.centroids;
             $scope.clusters = response.data.clusters;
         });
-    }
+    };
     $scope.max3 = function(key) {
         return ($scope.selectedList.includes(key) || $scope.selectedList.length<3);
         return true;

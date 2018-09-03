@@ -26,6 +26,18 @@
             overflow-y: auto;
             width: 100px;
         }
+        .visible {
+            display: block;
+            opacity: 1;
+            transition: opacity .5s linear;
+        }
+
+        .hidden {
+            display: none;
+            opacity: 0;
+            transition: display 0s .5s, opacity .5s linear;
+        }
+
         td { width: 180px; text-wrap: normal; word-wrap: break-word;}
         table { width :180px; text-wrap: normal;
             word-wrap: break-word;}
@@ -34,6 +46,7 @@
 
     <div ng-controller="allPlayersController">
         <table st-table="playerCollection" st-safe-src="playerList" class = "table table-bordered table-striped" st-sticky-header>
+
             <thead>
 
             <th st-sort="name">
@@ -90,46 +103,15 @@
                 <td data-toggle="tooltip" data-placement="bottom" title="{{player.name}}; % of shots that are pullup jump shots">{{player.pullupFga}}%</td>
 
             </tr>
-            <tr>
-                <th>
-                    Name
-                </th>
-                <th>
-                    Rim
-                </th>
-                <th>
-                    Close
-                </th>
-                <th>
-                    Midrange
-                </th>
-                <th>
-                    Three
-                </th>
-                <th>
-                    ssist
-                </th>
-                <th>
-                    Turnover
-                </th>
-                <th>
-                    Usage
-                </th>
-                <th>
-                    Drive
-                </th>
-                <th>
-                    Catch & Shoot
-                </th>
-                <th>
-                    Pullup
-                </th>
-            </tr>
             </tbody>
 
         </table>
     </div>
+    <div class="visible" id="loading">
+        <img src="/loading.gif" width="35%" height="50%"/>
 
+        <h1>&#8194 &#8194 Loading</h1>
+    </div>
 </body>
 <script>
 
@@ -139,31 +121,29 @@
 
     var app = angular.module("myApp",['smart-table']);
 
-    app.controller("allPlayersController", function ($scope, $http) {
+  app.controller("allPlayersController", function ($scope, $http) {
 
 
-        //Get JSON
-        let url= "./getall";
-        $.ajax({url , crossDomain: true, dataType: 'json', type: 'GET'})
-            .done(function (json) {
-                $scope.playerList = json;
-                $scope.$apply();
-            })
-            .fail(function () {
-                alert("Error");
-            });
+    //Get JSON
+    let url = "./getall";
+    $http.get(url)
+      .then(function (response) {
+        $scope.playerList = response.data;
+        $("#loading").attr('class', 'hidden');
+      })
+      .catch(function () {
+        alert("Error getting Player Data");
+      });
 
-        url= "./getdefinitions";
-        $.ajax({url , crossDomain: true, dataType: 'json', type: 'GET'})
-            .done(function (json) {
-                $scope.definitions = json;
-                $scope.$apply();
-            })
-            .fail(function () {
-                alert("Error");
-            });
-
-    });
+    url = "./getdefinitions";
+    $http.get(url)
+      .then(function (response) {
+        $scope.definitions = response.data;
+      })
+      .catch(function () {
+        alert("Error");
+      });
+  });
 
 
 </script>

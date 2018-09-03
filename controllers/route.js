@@ -13,6 +13,18 @@ exports.search = (req, res) => {
   });
 };
 
+exports.details = (req, res) => {
+  dynamo.get(req.query.id).then((response) =>{
+    const result = response;
+    const fullName = result.name.split(' ');
+    const fname = fullName[0].trim();
+    const lname = fullName[1].trim();
+    return res.render('detail', {
+      player: result, fname: fname, lname: lname
+    });
+  });
+}
+
 exports.singePlayerStats = (req, res) => {
   dynamo.get(req.query.id).then((response) =>{
     const result = response;

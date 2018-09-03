@@ -1,3 +1,13 @@
 .jumbotron {
     background-color: white
 }
+.content {
+    width: 4000px;
+    padding: 20px;
+    overflow: hidden;
+}
+
+.content img {
+    margin-right: 15px;
+    float: left;
+}
