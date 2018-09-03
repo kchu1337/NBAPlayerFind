@@ -1,3 +1,4 @@
 #Node modules
 node_modules/
-configs/
+configs/db.json
+.idea
