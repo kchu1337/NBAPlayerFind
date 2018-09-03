@@ -7,49 +7,60 @@ style
     include detail.css
 
 div.jumbotron
-    img(src='https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/'+player.teamId+'/2017/260x190/'+player.id+'.png',
-    alt='image not found')
-    table.table.table-bordered
+    div.content
+        img(src='https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/'+player.teamId+'/2017/260x190/'+player.id+'.png',
+        alt='image not found')
+        h3 #{player.name}
+        p #{player.team}
+    table.table.table-bordered(style='width:80%')
 
         thead
         tr
-            th Name
-            th Team
-            th FG Attempts% <8ft
-            th FG% <8ft
-            th FG Attempts% 8-16ft
-            th FG% 8-16ft
-            th FG Attempts% 16-24ft
-            th FG% 16-24ft
-            th FG Attempts% 24+ft
-            th FG% 24+ft
+            th(width='20%') % of Shots <8ft
+            th(width='20%') % of Shots 8-16ft
+            th(width='20%') % of Shots 16-24ft
+            th(width='20%') % of Shots 24+ft
         tbody
         tr
-            td #{player.name}
-            td #{player.team}
             td #{player.rimFga}%
-            td #{player.rimFgp}%
             td #{player.closeFga}%
-            td #{player.closeFgp}%
             td #{player.midrangeFga}%
-            td #{player.midrangeFgp}%
             td #{player.threeFga}%
-            td #{player.threeFgp}%
 
-    table.table.table-bordered
+    table.table.table-bordered(style='width:80%')
         thead
         tr
-            th Assist Rate
-            th Turnover Rate
-            th Usage Rate
-            th Drive Rate
-            th Catch and Shoot Rate
-            th Pullup Rate
+            th(width='20%') FG% <8ft
+            th(width='20%') FG% 8-16ft
+            th(width='20%') FG% 16-24ft
+            th(width='20%') FG% 24+ft
+        tbody
+        tr
+            td #{player.rimFgp}%
+            td #{player.closeFgp}%
+            td #{player.midrangeFgp}%
+            td #{player.threeFgp}%
+
+    table.table.table-bordered(style='width:60%')
+        thead
+        tr
+            th(width='20%') Drive Rate
+            th(width='20%') Catch and Shoot Rate
+            th(width='20%') Pullup Rate
+        tbody
+        tr
+            td #{player.driveFga}%
+            td #{player.catchShootFga}%
+            td #{player.pullupFga}%
+
+    table.table.table-bordered(style='width:60%')
+        thead
+        tr
+            th(width='20%') Assist Rate
+            th(width='20%') Turnover Rate
+            th(width='20%') Usage Rate
         tbody
         tr
             td #{player.ast}%
             td #{player.tov}%
             td #{player.usg}%
-            td #{player.driveFga}%
-            td #{player.catchShootFga}%
-            td #{player.pullupFga}%

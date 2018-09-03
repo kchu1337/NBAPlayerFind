@@ -3,6 +3,7 @@ const playerSearch = angular.module('playerSearch', []);
 function mainController($scope, $http) {
 
     $scope.percentileData=[];
+    $scope.definitions={};
 
     $http.get("/getPercentiles").then(function(response) {
         $scope.percentileData = response.data;
@@ -75,37 +76,37 @@ function mainController($scope, $http) {
     
     $http.get("/getdefinitions")
         .then(function (response) {
-        $scope.definitions = response;
+        $scope.definitions = response.data;
     });
     
     
     $scope.submit = function () {
         //Get all parameters from DOM
-        var rimFga = document.getElementById("rimFga").value;
-        var rimFgp = $scope.rimSelected.value;
-        var closeFga = document.getElementById("closeFga").value;
-        var closeFgp = $scope.closeSelected.value;
-        var midrangeFga = document.getElementById("midrangeFga").value;
-        var midrangeFgp = $scope.midrangeSelected.value;
-        var threeFga = document.getElementById("threeFga").value;
-        var threeFgp = $scope.threeSelected.value;
-        var ast = $scope.assistSelected.value;
-        var tov = $scope.turnoverSelected.value;
-        var usg = $scope.usageSelected.value;
-        var driveFga = document.getElementById("driveFga").value;
-        var catchShootFga = document.getElementById("CSFga").value;
-        var pullupFga = document.getElementById("pullupFga").value;
+        let rimFga = document.getElementById("rimFga").value;
+        let rimFgp = $scope.rimSelected.value;
+        let closeFga = document.getElementById("closeFga").value;
+        let closeFgp = $scope.closeSelected.value;
+        let midrangeFga = document.getElementById("midrangeFga").value;
+        let midrangeFgp = $scope.midrangeSelected.value;
+        let threeFga = document.getElementById("threeFga").value;
+        let threeFgp = $scope.threeSelected.value;
+        let ast = $scope.assistSelected.value;
+        let tov = $scope.turnoverSelected.value;
+        let usg = $scope.usageSelected.value;
+        let driveFga = document.getElementById("driveFga").value;
+        let catchShootFga = document.getElementById("CSFga").value;
+        let pullupFga = document.getElementById("pullupFga").value;
         
         
         //Find percentages if sum != 100
-        var fgaTotal = Number(rimFga) + Number(closeFga) + Number(midrangeFga) + Number(threeFga);
+        const fgaTotal = Number(rimFga) + Number(closeFga) + Number(midrangeFga) + Number(threeFga);
         rimFga = rimFga / fgaTotal * 100;
         closeFga = closeFga / fgaTotal * 100;
         midrangeFga = midrangeFga / fgaTotal * 100;
         threeFga = threeFga / fgaTotal * 100;
 
         //Create post body
-        var body = {
+        const body = {
           rimFga,
           rimFgp,
           closeFga,
@@ -121,11 +122,10 @@ function mainController($scope, $http) {
           catchShootFga,
           pullupFga
         };
-
         //Get JSON
       $http.post("/search", body)
             .then(function (response) {
-                $scope.players = response;
+                $scope.players = response.data;
                 $scope.$apply();
             })
             .catch(function () {

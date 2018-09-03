@@ -58,7 +58,7 @@ app.get('/search', routeController.search);
 //shows webpage of all players
 app.get('/playerlist', routeController.playerList);
 //shows webpage of specific player
-app.get('/singePlayerStats', routeController.details);
+app.get('/details', routeController.details);
 //redirects to initial clusterize page
 app.get('/cluster', routeController.clusterInitial);
 app.get('/getPlayer', homeController.getplayer);

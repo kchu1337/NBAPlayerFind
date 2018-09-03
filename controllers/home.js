@@ -3,14 +3,14 @@ const kmeans = require("node-kmeans");
 const dynamo = require('../helpers/dynamo');
 const _ = require('lodash');
 const statsDefinitions = {
-    rimFga: 'Field goal % at the rim',
-    rimFgp: '% of shots taken at the rim',
-    closeFga: 'Field goal % 5-10 ft from the basket',
-    closeFgp: '% of shots taken from 5-10 ft',
-    midrangeFga: 'Field goal % 11-24 ft from the basket',
-    midrangeFgp: '% of shots taken from 11-24 ft',
-    threeFga: 'Field goal % of 3 pointers',
-    threeFgp: '% of shots taken from 3',
+    rimFga: '% of shots taken at the rim ',
+    rimFgp: 'Field goal % at the rim',
+    closeFgp: 'Field goal % 5-10 ft from the basket',
+    closeFga: '% of shots taken from 5-10 ft',
+    midrangeFga: '% of shots taken from 11-24 ft',
+    midrangeFgp: 'Field goal % 11-24 ft from the basket',
+    threeFga: '% of shots taken from 3',
+    threeFgp: 'Field goal % of 3 pointers',
     driveFga: '% of shots that are drives to the basket',
     catchShootFga: '% of shots that are catch and shoot',
     postFga: '% of shots that from posting up',
@@ -102,7 +102,6 @@ exports.getPercentiles = (req, res) => {
 };
 
 exports.getSearchResults = (req, res) => {
-
   //Only calculates stats are numbers
   const statsToCalculate = _.pickBy(req.body, _.toNumber);
   return dynamo.scan().then((results) => {
