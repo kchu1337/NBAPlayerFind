@@ -52,7 +52,7 @@ const routeController = require('./controllers/route');
  * Primary app routes.
  */
 //returns home page
-app.get('/', routeController.search);
+app.get('/', routeController.home);
 //loads search page
 app.get('/search', routeController.search);
 //shows webpage of all players

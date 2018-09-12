@@ -1,7 +1,7 @@
-'use strict'
+'use strict';
 const dynamo = require('../helpers/dynamo');
 
-exports.index = (req, res) => {
+exports.home = (req, res) => {
   res.render('home', {
     title: 'Home'
   });
@@ -23,7 +23,7 @@ exports.details = (req, res) => {
       player: result, fname: fname, lname: lname
     });
   });
-}
+};
 
 exports.singePlayerStats = (req, res) => {
   dynamo.get(req.query.id).then((response) =>{
