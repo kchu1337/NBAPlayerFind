@@ -6,8 +6,10 @@ const catchShootStatsJson = require("../json/catchshoot");
 const usageStatsJson = require("../json/usage");
 const pullupJson = require("../json/pullup");
 const dynamo = require("../helpers/dynamo");
+const _ = require('lodash');
 
 
+const playerMap = {}
 
 const shoot5Stats = shoot5Json.resultSets.rowSet;
 /*
@@ -21,6 +23,19 @@ const shoot5Stats = shoot5Json.resultSets.rowSet;
 9	"FGA"
 10	"FG_PCT"
 */
+for(let i =0; i<shoot5Stats.length; i++) {
+  const id = shoot5Stats[i][0];
+  let stats = {
+    lt5Fgm: parseFloat(shoot5Stats[i][5]),
+    lt5Fga: parseFloat(shoot5Stats[i][6]),
+    lt9Fgm: parseFloat(shoot5Stats[i][8]),
+    lt9Fga: parseFloat(shoot5Stats[i][9])
+  }
+  if(!(playerMap[id] || false)){
+    playerMap[id] = {};
+  }
+  Object.assign(playerMap[id], stats);
+}
 
 //http://stats.nba.com/stats/leaguedashplayershotlocations?DateFrom=&DateTo=&DistanceRange=8ft+Range&Division=&GameScope=&GameSegment=&Height=&LastNGames=0&LeagueID=00&Location=&MeasureType=Base&Month=0&OpponentTeamID=0&Outcome=&PORound=0&PaceAdjust=N&PerMode=PerGame&Period=0&PlayerExperience=&PlayerPosition=G&PlusMinus=N&Rank=N&Season=2017-18&SeasonSegment=&SeasonType=Regular+Season&StarterBench=&TeamID=0&VsConference=&VsDivision=
 const shoot8Stats = shoot8Json.resultSets.rowSet;
@@ -51,6 +66,24 @@ backcourt
 18	"FGA"
 19	"FG_PCT"
 */
+for(let i =0; i<shoot8Stats.length; i++) {
+  const id = shoot8Stats[i][0];
+  let stats = {
+    lt8Fgm: parseFloat(shoot8Stats[i][8]),
+    lt8Fga: parseFloat(shoot8Stats[i][6]),
+    lt16Fgm: parseFloat(shoot8Stats[i][8]),
+    lt16Fga: parseFloat(shoot8Stats[i][9]),
+    lt24Fgm: parseFloat(shoot8Stats[i][11]),
+    lt24Fga: parseFloat(shoot8Stats[i][12]),
+    gt24Fgm: parseFloat(shoot8Stats[i][14]),
+    gt24Fga: parseFloat(shoot8Stats[i][15])
+
+  }
+  if(!(playerMap[id] || false)){
+    playerMap[id] = {};
+  }
+  Object.assign(playerMap[id], stats);
+}
 
 
 const shootZoneStats = shootZoneJson.resultSets.rowSet;
@@ -62,6 +95,17 @@ in restricted zone
 7	"FG_PCT"
 ...
 */
+for(let i =0; i<shootZoneStats.length; i++) {
+  const id = shootZoneStats[i][0];
+  let stats = {
+    restrictedFgm: parseFloat(shootZoneStats[i][5]),
+    restrictedFga: parseFloat(shootZoneStats[i][6])
+  }
+  if(!(playerMap[id] || false)){
+    playerMap[id] = {};
+  }
+  Object.assign(playerMap[id], stats);
+}
 
 
 //http://stats.nba.com/stats/leaguedashptstats?DateFrom=&DateTo=&Division=&GameScope=&LastNGames=0&LeagueID=00&Location=&Month=0&OpponentTeamID=0&Outcome=&PORound=0&PerMode=PerGame&PlayerExperience=&PlayerOrTeam=Player&PlayerPosition=G&PtMeasureType=Drives&Season=2017-18&SeasonSegment=&SeasonType=Regular+Season&StarterBench=&TeamID=0&VsConference=&VsDivision=
@@ -81,7 +125,21 @@ const driveStats = driveStatsJson.resultSets[0].rowSet;
 13  "DRIVE_FTA"
 ...
 */
-
+for(let i =0; i<driveStats.length; i++) {
+  const id = driveStats[i][0];
+  let stats = {
+    gamespPlayed: parseFloat(driveStats[i][4]),
+    minutes: parseFloat(driveStats[i][7]),
+    driveFgm: parseFloat(driveStats[i][9]),
+    driveFga: parseFloat(driveStats[i][10]),
+    driveFtm: parseFloat(driveStats[i][12]),
+    driveFta: parseFloat(driveStats[i][13])
+  }
+  if(!(playerMap[id] || false)){
+    playerMap[id] = {};
+  }
+  Object.assign(playerMap[id], stats);
+}
 
 
 //http://stats.nba.com/stats/leaguedashptstats?DateFrom=&DateTo=&Division=&GameScope=&LastNGames=0&LeagueID=00&Location=&Month=0&OpponentTeamID=0&Outcome=&PORound=0&PerMode=PerGame&PlayerExperience=&PlayerOrTeam=Player&PlayerPosition=G&PtMeasureType=CatchandShoot&Season=2017-18&SeasonSegment=&SeasonType=Regular+Season&StarterBench=&TeamID=0&VsConference=&VsDivision=
@@ -94,7 +152,17 @@ const catchShootStats = catchShootStatsJson.resultSets[0].rowSet;
 ...
 13  "CATCH_SHOOT_FG3A"
  */
-
+for(let i =0; i<catchShootStats.length; i++) {
+  const id = catchShootStats[i][0];
+  let stats = {
+    catchShootFgm: parseFloat(catchShootStats[i][8]),
+    catchShootFga: parseFloat(catchShootStats[i][9])
+  }
+  if(!(playerMap[id] || false)){
+    playerMap[id] = {};
+  }
+  Object.assign(playerMap[id], stats);
+}
 
 
 
@@ -111,6 +179,24 @@ const usageStats = usageStatsJson.resultSets[0].rowSet;
 22	"USG_PCT"
 ...
  */
+for(let i =0; i<usageStats.length; i++) {
+  const id = usageStats[i][0];
+  let stats = {
+    id,
+    name: usageStats[i][1],
+    teamId: usageStats[i][2],
+    team: usageStats[i][3],
+    gamesPlayed: parseFloat(usageStats[i][5]),
+    minutes: parseFloat(usageStats[i][9]),
+    ast: parseFloat(usageStats[i][15]),
+    tov: parseFloat(usageStats[i][19]),
+    usg: (parseFloat(usageStats[i][22]) * 100).toFixed(2)
+  }
+  if(!(playerMap[id] || false)){
+    playerMap[id] = {};
+  }
+  Object.assign(playerMap[id], stats);
+}
 
 const pullupStats = pullupJson.resultSets[0].rowSet;
 /*
@@ -121,95 +207,67 @@ const pullupStats = pullupJson.resultSets[0].rowSet;
 12	"PULL_UP_FG3A"
 ...
  */
-
-
-//removes misatched players
-function removeId(id,i){
-
-
-
-    (shoot8Stats[i][0] === id)?shoot8Stats.splice(i,1):null;
-
-    (shoot5Stats[i][0] === id)? shoot5Stats.splice(i,1):null;
-
-    (shootZoneStats[i][0] === id)?shootZoneStats.splice(i,1):null;
-
-    (driveStats[i][0] === id)?driveStats.splice(i,1):null;
-
-    (pullupStats[i][0] === id)?pullupStats.splice(i,1):null;
-
-    (usageStats[i][0] === id)?usageStats.splice(i,1):null;
-
-    (catchShootStats[i][0] === id)?catchShootStats.splice(i,1):null;
-
+for(let i =0; i<pullupStats.length; i++) {
+  const id = pullupStats[i][0];
+  let stats = {
+    pullupFgm: parseFloat(pullupStats[i][8]),
+    pullupFga: parseFloat(pullupStats[i][9])
+  }
+  if(!(playerMap[id] || false)){
+    playerMap[id] = {};
+  }
+  Object.assign(playerMap[id], stats);
 }
 
+_.forEach(playerMap, (playerStat) => {
+  if (Object.keys(playerStat).length === 32 && playerStat.gamesPlayed > 10 && playerStat.minutes > 15 ) {
+    //Get field goals from various areas at the rim, close range, mid range, and 3pters
+    const totalFga = playerStat.lt8Fga + playerStat.lt16Fga + playerStat.lt24Fga + playerStat.gt24Fga;
+    const totalFgm = playerStat.lt8Fgm + playerStat.lt16Fgm + playerStat.lt24Fgm + playerStat.gt24Fgm;
+    const total3ptFga = playerStat.gt24Fga;
+    const total3ptFgm = playerStat.gt24Fgm;
+    //within circle
+    const totalRimFga = playerStat.restrictedFga;
+    const totalRimFgm = playerStat.restrictedFgm;
+    //5-10 ft
+    const totalCloseFga = playerStat.lt5Fga + playerStat.lt9Fga - totalRimFga;
+    const totalCloseFgm = playerStat.lt5Fgm + playerStat.lt9Fgm - totalRimFgm;
 
-for(let i =0; i<shoot5Stats.length; i++) {
-    //checks consistency of data
-  //console.log(shoot8Stats[i][0]+" "+ driveStats[i][0]+" "+ shootZoneStats[i][0]+" "+ pullupStats[i][0]+" "+ catchShootStats[i][0]+" "+ usageStats[i][0]);
-    if (shoot8Stats[i][0] !== driveStats[i][0] || shoot8Stats[i][0] !== catchShootStats[i][0]
-        || shoot8Stats[i][0] !== shoot5Stats[i][0] || shoot8Stats[i][0] !== shootZoneStats[i][0]
-        || shoot8Stats[i][0] !== pullupStats[i][0] || shoot8Stats[i][0] !== usageStats[i][0]) {
-        removeId(shoot8Stats[i][0],i);
-        i--;
-    }
-    else {
+    //11-24 ft
+    const totalMidrangeFga = totalFga - total3ptFga - totalCloseFga - totalRimFga;
+    const totalMidrangeFgm = totalFgm - total3ptFgm - totalCloseFgm - totalRimFgm;
 
-      // filters min>15 & gp>10
-      if (driveStats[i][7] > 15 && driveStats[i][4] > 10) {
-        //Get field goals from various areas at the rim, close range, mid range, and 3pters
-        const totalFga = shoot8Stats[i][6] + shoot8Stats[i][9] + shoot8Stats[i][12] + shoot8Stats[i][15];
-        const totalFgm = shoot8Stats[i][5] + shoot8Stats[i][8] + shoot8Stats[i][11] + shoot8Stats[i][14];
-        const total3ptFga = shoot8Stats[i][15];
-        const total3ptFgm = shoot8Stats[i][14];
-        //within circle
-        const totalRimFga = shootZoneStats[i][6];
-        const totalRimFgm = shootZoneStats[i][5];
-        //5-10 ft
-        const totalCloseFga = shoot5Stats[i][6] + shoot5Stats[i][9] - totalRimFga;
-        const totalCloseFgm = shoot5Stats[i][5] + shoot5Stats[i][8] - totalRimFgm;
+    //total field goal attempts by type (C&S, drive, pullup, postup)
+    //adds half of fta to fga
+    const typeTotalFga = playerStat.driveFga + playerStat.driveFta / 2 + playerStat.catchShootFga + playerStat.pullupFga;
+    const driveFga = ((playerStat.driveFga + playerStat.driveFta / 2) / typeTotalFga * 100).toFixed(2);
+    const catchShootFga = (playerStat.catchShootFga/ typeTotalFga * 100).toFixed(2);
+    const pullupFga = (playerStat.pullupFga / typeTotalFga * 100).toFixed(2);
 
-        //11-24 ft
-        const totalMidrangeFga = totalFga - total3ptFga - totalCloseFga - totalRimFga;
-        const totalMidrangeFgm = totalFgm - total3ptFgm - totalCloseFgm - totalRimFgm;
+    const player = {
+      id: playerStat.id.toString(),
+      teamId: playerStat.teamId.toString(),
+      name: playerStat.name.toString(),
+      team: playerStat.team.toString(),
+      rimFga: (totalRimFga / totalFga * 100).toFixed(2),
+      rimFgp: (totalRimFgm / totalRimFga * 100).toFixed(2),
+      closeFga: (totalCloseFga / totalFga * 100).toFixed(2),
+      closeFgp: (totalCloseFgm / totalCloseFga * 100).toFixed(2),
+      midrangeFga: (totalMidrangeFga / totalFga * 100).toFixed(2),
+      midrangeFgp: (totalMidrangeFgm / totalMidrangeFga * 100).toFixed(2),
+      threeFga: (total3ptFga / totalFga * 100).toFixed(2),
+      threeFgp: (total3ptFgm / total3ptFga * 100).toFixed(2),
+      driveFga,
+      catchShootFga,
+      pullupFga,
+      ast: playerStat.ast,
+      tov: playerStat.tov,
+      usg: playerStat.usg,
+    };
 
-        //total field goal attempts by type (C&S, drive, pullup, postup)
-        //adds half of fta to fga
-        const typeTotalFga = driveStats[i][10] + driveStats[i][13] / 2 + catchShootStats[i][9] + pullupStats[i][9];
-        const driveFga = ((driveStats[i][10] + driveStats[i][13] / 2) / typeTotalFga * 100).toFixed(2);
-        const catchShootFga = (catchShootStats[i][9] / typeTotalFga * 100).toFixed(2);
-        const pullupFga = (pullupStats[i][9] / typeTotalFga * 100).toFixed(2);
+    dynamo.put(player).then((res) =>{
+    })
 
-        //Gets 3pt catch and shoot %
-        const catchShoot3pt = (catchShootStats[i][13] / typeTotalFga * 100).toFixed(2);
-
-        //Start creating player object
-        const player = {
-          id: shoot8Stats[i][0].toString(),
-          teamId: shoot8Stats[i][2],
-          name: shoot8Stats[i][1],
-          team: shoot8Stats[i][3],
-          rimFga: (totalRimFga / totalFga * 100).toFixed(2),
-          rimFgp: (totalRimFgm / totalRimFga * 100).toFixed(2),
-          closeFga: (totalCloseFga / totalFga * 100).toFixed(2),
-          closeFgp: (totalCloseFgm / totalCloseFga * 100).toFixed(2),
-          midrangeFga: (totalMidrangeFga / totalFga * 100).toFixed(2),
-          midrangeFgp: (totalMidrangeFgm / totalMidrangeFga * 100).toFixed(2),
-          threeFga: (total3ptFga / totalFga * 100).toFixed(2),
-          threeFgp: (total3ptFgm / total3ptFga * 100).toFixed(2),
-          driveFga,
-          catchShootFga,
-          pullupFga,
-          ast: usageStats[i][15],
-          tov: usageStats[i][19],
-          usg: (usageStats[i][22] * 100).toFixed(2),
-          catchShoot3pt
-        };
-
-        dynamo.put(player).then((res) =>{
-        })
-      }
-    }
-}
+  }
+});
 
